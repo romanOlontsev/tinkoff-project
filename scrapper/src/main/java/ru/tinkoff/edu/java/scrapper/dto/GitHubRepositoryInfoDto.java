@@ -1,8 +1,10 @@
-package ru.tinkoff.edu.java.scrapper.model.dto;
+package ru.tinkoff.edu.java.scrapper.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
@@ -22,4 +24,11 @@ public class GitHubRepositoryInfoDto {
         @JsonProperty("id")
         private String ownerId;
     }
+
+    @JsonProperty("created_at")
+    private OffsetDateTime createdAt;
+    @JsonProperty("updated_at")
+    private OffsetDateTime updatedAt;
+    @JsonProperty("pushed_at")
+    private OffsetDateTime pushedAt;
 }

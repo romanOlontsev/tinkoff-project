@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import ru.tinkoff.edu.java.parser.result.GitHubResultRecord;
-import ru.tinkoff.edu.java.scrapper.model.dto.GitHubRepositoryInfoDto;
+import ru.tinkoff.edu.java.scrapper.dto.GitHubRepositoryInfoDto;
 import ru.tinkoff.edu.java.scrapper.service.client.GitHubClient;
 
 @RestController

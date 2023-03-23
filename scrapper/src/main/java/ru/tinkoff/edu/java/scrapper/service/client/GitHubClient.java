@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.tinkoff.edu.java.parser.result.GitHubResultRecord;
-import ru.tinkoff.edu.java.scrapper.model.dto.GitHubRepositoryInfoDto;
+import ru.tinkoff.edu.java.scrapper.dto.GitHubRepositoryInfoDto;
 
 @Service
 @RequiredArgsConstructor
 public class GitHubClient {
     private final WebClient webClient;
-    @Value("${webclient.base-url}")
+    @Value("${github.webclient.base-url}")
     private String baseUrl;
 
     public Mono<GitHubRepositoryInfoDto> getGitHubRepositoryInfo(GitHubResultRecord repository) {
