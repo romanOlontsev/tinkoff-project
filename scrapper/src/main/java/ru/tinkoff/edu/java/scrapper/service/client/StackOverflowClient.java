@@ -24,7 +24,6 @@ public class StackOverflowClient {
 
         return webClient.get()
                         .uri(url)
-//                        .accept(MediaType.valueOf("application/vnd.github+json"))
                         .header(HttpHeaders.ACCEPT_ENCODING, "gzip")
                         .retrieve()
                         .bodyToMono(StackOverflowQuestionInfoDto.class);

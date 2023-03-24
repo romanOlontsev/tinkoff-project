@@ -21,7 +21,6 @@ public class GitHubClient {
 
         return webClient.get()
                         .uri(url)
-//                        .header("application/vnd.github+json")
                         .accept(MediaType.valueOf("application/vnd.github+json"))
                         .retrieve()
                         .bodyToMono(GitHubRepositoryInfoDto.class);

@@ -30,8 +30,7 @@ public class ClientConfiguration {
                 });
 
         return WebClient.builder()
-//                        .baseUrl(BASE_URL)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                         .clientConnector(new ReactorClientHttpConnector(httpClient))
                         .build();
     }

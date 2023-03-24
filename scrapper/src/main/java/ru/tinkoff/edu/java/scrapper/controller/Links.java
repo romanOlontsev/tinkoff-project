@@ -91,20 +91,20 @@ public interface Links {
                     description = "Ссылка не найдена",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ApiErrorResponse.class))) })
+                            schema = @Schema(implementation = ApiErrorResponse.class)))})
     @DeleteMapping(value = "/links",
-            produces = { "application/json" },
-            consumes = { "application/json" })
+            produces = {"application/json"},
+            consumes = {"application/json"})
     ResponseEntity<LinkResponse> deleteLinks(
             @Parameter(
                     in = ParameterIn.HEADER,
-                    required=true,
-                    schema=@Schema())
-            @RequestHeader(value="Tg-Chat-Id") Long tgChatId,
+                    required = true,
+                    schema = @Schema())
+            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId,
             @Parameter(
                     in = ParameterIn.DEFAULT,
-                    required=true,
-                    schema=@Schema())
+                    required = true,
+                    schema = @Schema())
             @Valid
             @RequestBody RemoveLinkRequest body);
 }
