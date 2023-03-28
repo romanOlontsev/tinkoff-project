@@ -8,7 +8,6 @@ import ru.tinkoff.edu.java.scrapper.configuration.ApplicationConfig;
 
 @SpringBootApplication
 @EnableConfigurationProperties(ApplicationConfig.class)
-@EnableScheduling
 public class ScrapperApplication {
     public static void main(String[] args) {
         var ctx = SpringApplication.run(ScrapperApplication.class, args);

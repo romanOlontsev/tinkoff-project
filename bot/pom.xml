@@ -13,6 +13,7 @@
 
     <properties>
         <openapi-webmvc-ui.version>2.0.2</openapi-webmvc-ui.version>
+        <pengrad-java-telegram-bot.version>6.5.0</pengrad-java-telegram-bot.version>
     </properties>
 
     <dependencies>
@@ -52,6 +53,15 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${openapi-webmvc-ui.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.pengrad</groupId>
+            <artifactId>java-telegram-bot-api</artifactId>
+            <version>${pengrad-java-telegram-bot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -63,6 +73,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

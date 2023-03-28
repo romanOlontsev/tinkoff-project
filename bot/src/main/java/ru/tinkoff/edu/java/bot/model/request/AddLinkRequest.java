@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.model.request;
+package ru.tinkoff.edu.java.bot.model.request;
 
 import lombok.*;
 
@@ -9,6 +9,6 @@ import java.net.URI;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RemoveLinkRequest {
+public class AddLinkRequest {
     private URI link;
 }

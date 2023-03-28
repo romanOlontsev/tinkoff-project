@@ -1,12 +1,14 @@
 package ru.tinkoff.edu.java.bot.model.response;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ApiErrorResponse {
     private String description;
