@@ -17,8 +17,7 @@ public class StackOverflowClient {
     private String baseUrl;
 
     public Mono<StackOverflowQuestionInfoResponse> getStackOverflowQuestionInfo(StackOverflowResultRecord questionId) {
-        String url = questionId == null ? baseUrl : "https://api.stackexchange.com/2.3/questions/" +
-                questionId.getResult() + "?order=desc&sort=activity&site=stackoverflow";
+        String url = questionId == null ? String.format(baseUrl, "") : String.format(baseUrl, questionId.getResult());
 
         return webClient.get()
                         .uri(url)

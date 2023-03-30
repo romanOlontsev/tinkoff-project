@@ -17,8 +17,9 @@ public class GitHubClient {
     private String baseUrl;
 
     public Mono<GitHubRepositoryInfoResponse> getGitHubRepositoryInfo(GitHubResultRecord repository) {
-        String url = repository == null? baseUrl : "https://api.github.com/repos/" + repository.getResult();
-
+        String url = repository == null ?
+                String.join("", baseUrl, "romanOlontsev/ticket-service") :
+                String.join("", baseUrl, repository.getResult());
         return webClient.get()
                         .uri(url)
                         .accept(MediaType.valueOf("application/vnd.github+json"))

@@ -18,7 +18,7 @@ import ru.tinkoff.edu.java.bot.service.command.imp.UnknownCommand;
 import java.util.List;
 
 @Service
-public class BotStarter implements Bot {
+public class BotStarter {
     private final TelegramBot bot;
     private final CommandList commandList;
 
@@ -28,35 +28,47 @@ public class BotStarter implements Bot {
         botCommandInit();
     }
 
-    @Override
-    public int process(List<Update> updates) {
-
+    public void process(List<Update> updates) {
         updates.forEach(update -> {
             Message message = update.message();
             if (message != null) {
-                Command command = commandList.getCommandList()
-                                             .stream()
-                                             .filter(it -> it.command()
-                                                             .equals(message.text()))
-                                             .findFirst()
-                                             .orElseGet(UnknownCommand::new);
-                SendMessage sendMessage = command.handle(update);
-
+                SendMessage sendMessage = handleByCommand(update, message);
                 bot.execute(sendMessage);
             }
         });
-        return 0;
     }
 
-    @Override
+    public SendMessage handleByCommand(Update update, Message message) {
+        Command command = commandList.getCommandList()
+                                     .stream()
+                                     .filter(it -> it.command()
+                                                     .equals(message.text()))
+                                     .findFirst()
+                                     .orElseGet(UnknownCommand::new);
+        return command.handle(update);
+    }
+
     public void start() {
         bot.setUpdatesListener(updates -> {
-            process(updates);
+//            process(updates);
+            updates.forEach(update -> {
+                Message message = update.message();
+                if (message != null) {
+//                    SendMessage sendMessage = handleByCommand(update, message);
+                    Command command = commandList.getCommandList()
+                                                 .stream()
+                                                 .filter(it -> it.command()
+                                                                 .equals(message.text()))
+                                                 .findFirst()
+                                                 .orElseGet(UnknownCommand::new);
+                    SendMessage sendMessage = command.handle(update);
+                    bot.execute(sendMessage);
+                }
+            });
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
     }
 
-    @Override
     public void close() {
         bot.removeGetUpdatesListener();
     }

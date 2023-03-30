@@ -1,7 +1,9 @@
 package ru.tinkoff.edu.java.bot.service.command.imp;
 
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.bot.service.LinkService;
 import ru.tinkoff.edu.java.bot.service.command.Command;
@@ -11,6 +13,9 @@ import java.util.List;
 
 @Service
 public class ListCommand implements Command {
+    @Getter
+    private static final String LINK_LIST_IS_EMPTY = "Link list is empty";
+
     private final LinkService linkService;
 
     public ListCommand(LinkService linkService) {
@@ -29,17 +34,16 @@ public class ListCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        String answer = "Link list is empty";
-
-//        linkService.setLinkList(List.of("Saks", "Gas"));
+        String answer =LINK_LIST_IS_EMPTY;
         if (linkService.getLinkList() != null && !linkService.getLinkList()
                                                              .isEmpty()) {
             List<String> linkList = linkService.getLinkList();
             answer = String.join("\n", linkList);
         }
-
-        return new SendMessage(update.message()
-                                     .chat()
-                                     .id(), answer);
+        SendMessage sendMessage = new SendMessage(update.message()
+                                                        .chat()
+                                                        .id(), answer);
+        sendMessage.parseMode(ParseMode.HTML);
+        return sendMessage;
     }
 }

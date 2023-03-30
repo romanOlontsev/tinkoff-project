@@ -88,16 +88,15 @@ public class LinksController implements Links {
             @Valid
             @RequestBody
             RemoveLinkRequest body) {
-//        String accept = request.getHeader("Accept");
-//        if (accept != null && accept.contains("application/json")) {
-//            try {
-//                return new ResponseEntity<LinkResponse>(objectMapper.readValue("{\n  \"id\" : 0,\n  \"url\" : \"http://example.com/aeiou\"\n}", LinkResponse.class), HttpStatus.NOT_IMPLEMENTED);
-//            } catch (IOException e) {
-//                log.error("Couldn't serialize response for content type application/json", e);
-//                return new ResponseEntity<LinkResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//        }
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("application/json")) {
+            LinkResponse build = LinkResponse.builder()
+                                             .id(1L)
+                                             .url(body.getLink())
+                                             .build();
+            return new ResponseEntity<>(build, HttpStatus.OK);
+        }
 
-        return new ResponseEntity<LinkResponse>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
