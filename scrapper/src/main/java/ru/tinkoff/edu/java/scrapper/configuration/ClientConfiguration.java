@@ -17,9 +17,32 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class ClientConfiguration {
     public static final int TIMEOUT = 5000;
+    @Value("${github.webclient.base-url}")
+    private String gitHubBaseUrl;
+    @Value("${stackoverflow.webclient.base-url}")
+    private String stackOverflowBaseUrl;
 
     @Bean
-    public WebClient webClientWithTimeout() {
+    public WebClient gitHubClientWithTimeout() {
+        final HttpClient httpClient = HttpClient
+                .create()
+//                .compress(true)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
+                .responseTimeout(Duration.ofMillis(TIMEOUT))
+                .doOnConnected(connection -> {
+                    connection.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
+                    connection.addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
+                });
+        return WebClient.builder()
+                        .baseUrl(gitHubBaseUrl)
+                        .defaultHeader(HttpHeaders.ACCEPT, "application/vnd.github+json")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .clientConnector(new ReactorClientHttpConnector(httpClient))
+                        .build();
+    }
+
+    @Bean
+    public WebClient stackOverflowClientWithTimeout() {
         final HttpClient httpClient = HttpClient
                 .create()
                 .compress(true)
@@ -31,7 +54,9 @@ public class ClientConfiguration {
                 });
 
         return WebClient.builder()
+                        .baseUrl(stackOverflowBaseUrl)
                         .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .defaultHeader(HttpHeaders.ACCEPT_ENCODING, "gzip")
                         .clientConnector(new ReactorClientHttpConnector(httpClient))
                         .build();
     }

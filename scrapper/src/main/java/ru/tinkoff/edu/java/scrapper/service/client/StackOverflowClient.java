@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.service.client;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,16 +12,19 @@ import ru.tinkoff.edu.java.scrapper.model.response.StackOverflowQuestionInfoResp
 @Service
 @RequiredArgsConstructor
 public class StackOverflowClient {
+    @Qualifier("stackOverflowClientWithTimeout")
     private final WebClient webClient;
-    @Value("${stackoverflow.webclient.base-url}")
-    private String baseUrl;
 
     public Mono<StackOverflowQuestionInfoResponse> getStackOverflowQuestionInfo(StackOverflowResultRecord questionId) {
-        String url = questionId == null ? String.format(baseUrl, "") : String.format(baseUrl, questionId.getResult());
-
         return webClient.get()
-                        .uri(url)
-                        .header(HttpHeaders.ACCEPT_ENCODING, "gzip")
+                        .uri(uriBuilder -> {
+                            return uriBuilder
+                                    .path("/2.3/questions/{id}")
+                                    .queryParam("order", "desc")
+                                    .queryParam("sort", "activity")
+                                    .queryParam("site", "stackoverflow")
+                                    .build(questionId.getResult());
+                        })
                         .retrieve()
                         .bodyToMono(StackOverflowQuestionInfoResponse.class);
 

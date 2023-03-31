@@ -33,7 +33,7 @@ public class LinksController implements Links {
                     required = true, schema = @Schema())
             @RequestHeader(
                     value = "Tg-Chat-Id")
-            Long tgChatId) throws DataNotFoundException {
+            Long tgChatId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             ListLinksResponse listLinksResponse = new ListLinksResponse();
