@@ -18,8 +18,11 @@ public class GitHubRepositoryInfoResponse {
     @JsonProperty("owner")
     private Owner owner;
 
-    @Data
+    @Getter
+    @Setter
+    @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     private static class Owner {
         @JsonProperty("login")
         private String ownerLogin;

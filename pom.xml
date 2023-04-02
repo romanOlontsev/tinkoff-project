@@ -97,7 +97,6 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-failsafe.version}</version>
                 </plugin>
-
             </plugins>
         </pluginManagement>
     </build>

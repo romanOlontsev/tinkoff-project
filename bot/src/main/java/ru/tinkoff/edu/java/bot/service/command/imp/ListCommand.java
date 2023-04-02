@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.bot.service.LinkService;
 import ru.tinkoff.edu.java.bot.service.command.Command;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,7 +33,7 @@ public class ListCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        String answer =LINK_LIST_IS_EMPTY;
+        String answer = LINK_LIST_IS_EMPTY;
         if (linkService.getLinkList() != null && !linkService.getLinkList()
                                                              .isEmpty()) {
             List<String> linkList = linkService.getLinkList();
