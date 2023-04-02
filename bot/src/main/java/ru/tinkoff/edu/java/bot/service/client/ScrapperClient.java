@@ -1,8 +1,6 @@
 package ru.tinkoff.edu.java.bot.service.client;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,20 +12,15 @@ import ru.tinkoff.edu.java.bot.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.bot.model.response.LinkResponse;
 import ru.tinkoff.edu.java.bot.model.response.ListLinksResponse;
 
-import java.net.URI;
-
 @Service
 @RequiredArgsConstructor
 public class ScrapperClient {
     private final WebClient webClient;
-    @Value("${scrapper.base-url}")
-    private URI baseUrl;
 
     public Mono<ResponseEntity<ListLinksResponse>> getLinks(Long tgChatId) {
-        URI url = URI.create(baseUrl + "/links");
-
         return webClient.get()
-                        .uri(url)
+                        .uri(uriBuilder -> uriBuilder.path("/links")
+                                                     .build())
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Tg-Chat-Id", String.valueOf(tgChatId))
                         .retrieve()
@@ -35,10 +28,9 @@ public class ScrapperClient {
     }
 
     public Mono<ResponseEntity<LinkResponse>> postLinks(Long tgChatId, AddLinkRequest requestBody) {
-        URI url = URI.create(baseUrl + "/links");
-
         return webClient.post()
-                        .uri(url)
+                        .uri(uriBuilder -> uriBuilder.path("/links")
+                                                     .build())
                         .body(Mono.just(requestBody), AddLinkRequest.class)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Tg-Chat-Id", String.valueOf(tgChatId))
@@ -47,10 +39,9 @@ public class ScrapperClient {
     }
 
     public Mono<ResponseEntity<LinkResponse>> deleteLinks(Long tgChatId, RemoveLinkRequest requestBody) {
-        URI url = URI.create(baseUrl + "/links");
-
         return webClient.method(HttpMethod.DELETE)
-                        .uri(url)
+                        .uri(uriBuilder -> uriBuilder.path("/links")
+                                                     .build())
                         .body(Mono.just(requestBody), RemoveLinkRequest.class)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Tg-Chat-Id", String.valueOf(tgChatId))
@@ -59,20 +50,18 @@ public class ScrapperClient {
     }
 
     public Mono<ResponseEntity<Void>> registerChat(Long id) {
-        URI url = URI.create(baseUrl + "/tg-chat/" + id);
-
         return webClient.post()
-                        .uri(url)
+                        .uri(uriBuilder -> uriBuilder.path("/tg-chat/{id}")
+                                                     .build(id))
                         .accept(MediaType.APPLICATION_JSON)
                         .retrieve()
                         .toEntity(Void.class);
     }
 
     public Mono<ResponseEntity<Void>> deleteChat(Long id) {
-        URI url = URI.create(baseUrl + "/tg-chat/" + id);
-
         return webClient.delete()
-                        .uri(url)
+                        .uri(uriBuilder -> uriBuilder.path("/tg-chat/{id}")
+                                                     .build(id))
                         .accept(MediaType.APPLICATION_JSON)
                         .retrieve()
                         .toEntity(Void.class);
