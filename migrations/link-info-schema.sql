@@ -1,30 +1,14 @@
-create schema link_info;
---
---     create table link
---     (
---         id  int          not null unique primary key,
---         url varchar(512) not null
---     );
+--liquibase formatted sql
 
-CREATE TABLE link_info.chat
+--changeset admin:1
+CREATE SCHEMA IF NOT EXISTS link_info;
+CREATE TABLE IF NOT EXISTS link_info.chat
 (
-    chat_id bigint NOT NULL,
-    CONSTRAINT PK_1 PRIMARY KEY (chat_id)
+    chat_id bigint NOT NULL PRIMARY KEY
 );
-
-CREATE TABLE link_info.link
+CREATE TABLE IF NOT EXISTS link_info.link
 (
-    id      bigint       NOT NULL GENERATED ALWAYS AS IDENTITY (
-        start 1
- ),
+    id      bigint       NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
     url     varchar(512) NOT NULL,
-    chat_id bigint       NOT NULL,
-    CONSTRAINT PK_1 PRIMARY KEY (id),
-    CONSTRAINT FK_1 FOREIGN KEY (chat_id) REFERENCES link_info.chat (chat_id)
+    chat_id bigint       NOT NULL REFERENCES link_info.chat ON DELETE CASCADE
 );
-
--- CREATE INDEX FK_2 ON link_info.link
---     (
---      chat_id
---         );
-
