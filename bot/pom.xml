@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <spring-boot.version>3.0.1</spring-boot.version>
+        <openapi-webmvc-ui.version>2.0.2</openapi-webmvc-ui.version>
     </properties>
 
     <dependencies>
@@ -46,6 +46,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${openapi-webmvc-ui.version}</version>
         </dependency>
     </dependencies>
 
