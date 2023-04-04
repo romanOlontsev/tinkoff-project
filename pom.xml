@@ -23,6 +23,7 @@
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <jetbrains-annotations.version>23.1.0</jetbrains-annotations.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-surefire-failsafe.version>3.0.0</maven-surefire-failsafe.version>
     </properties>
 
     <dependencyManagement>
@@ -86,6 +87,17 @@
                         <parameters>true</parameters>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-surefire-failsafe.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-failsafe.version}</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>

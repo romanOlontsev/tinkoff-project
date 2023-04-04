@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.ApiErrorResponse;
@@ -40,7 +41,7 @@ public interface Links {
                     in = ParameterIn.HEADER,
                     required = true,
                     schema = @Schema())
-            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId);
+            @RequestHeader(value = "Tg-Chat-Id") Long tgChatId) throws DataNotFoundException;
 
     @Operation(summary = "Добавить отслеживание ссылки")
     @ApiResponses(value = {

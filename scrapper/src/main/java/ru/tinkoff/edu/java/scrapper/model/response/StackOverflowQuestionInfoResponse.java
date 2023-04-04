@@ -1,24 +1,24 @@
-package ru.tinkoff.edu.java.scrapper.dto;
+package ru.tinkoff.edu.java.scrapper.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
-public class StackOverflowQuestionInfoDto {
+@Builder
+public class StackOverflowQuestionInfoResponse {
     private List<Items> items;
     @JsonProperty("has_more")
     private Boolean hasMore;
 
-
     @Data
     @NoArgsConstructor
     private static class Items {
-        //        @JsonProperty("")
         private List<String> tags;
         private Owner owner;
         @JsonProperty("creation_date")

@@ -1,14 +1,17 @@
 package ru.tinkoff.edu.java.scrapper.model.response;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-@Data
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ListLinksResponse {
-
     private List<LinkResponse> links;
-
     private Integer size;
 
     public ListLinksResponse addLinksItem(LinkResponse linksItem) {

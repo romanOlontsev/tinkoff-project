@@ -8,6 +8,5 @@ import ru.tinkoff.edu.java.scrapper.schedule.Schedule;
 
 @Validated
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
-@EnableScheduling
 public record ApplicationConfig(@NotNull String test, @NotNull Schedule scheduler) {
 }

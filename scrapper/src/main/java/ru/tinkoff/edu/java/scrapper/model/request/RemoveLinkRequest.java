@@ -1,8 +1,14 @@
 package ru.tinkoff.edu.java.scrapper.model.request;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+import java.net.URI;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RemoveLinkRequest {
-    private String link;
+    private URI link;
 }

@@ -1,22 +1,23 @@
 package ru.tinkoff.edu.java.scrapper.model.response;
 
-import lombok.Builder;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ApiErrorResponse {
     private String description;
-
     private String code;
-
+    @JsonProperty(value = "exception_name")
     private String exceptionName;
-
+    @JsonProperty(value = "exception_message")
     private String exceptionMessage;
-
     private List<String> stacktrace;
 
     public ApiErrorResponse addStacktraceItem(String stacktraceItem) {

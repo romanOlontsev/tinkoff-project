@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
-public class LinkParserApplication {
+public class  LinkParserApplication {
     private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private static Parser parser;
 
