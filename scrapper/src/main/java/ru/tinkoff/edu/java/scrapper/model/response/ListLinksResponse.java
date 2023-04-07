@@ -19,6 +19,7 @@ public class ListLinksResponse {
             this.links = new ArrayList<LinkResponse>();
         }
         this.links.add(linksItem);
+        size++;
         return this;
     }
 }
