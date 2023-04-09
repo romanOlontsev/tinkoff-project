@@ -8,7 +8,7 @@ import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 public interface LinksRepository {
     LinkResponse add(Long tgChatId, AddLinkRequest request);
 
-    LinkResponse remove(RemoveLinkRequest request);
+    LinkResponse remove(Long tgChatId, RemoveLinkRequest request);
 
     ListLinksResponse findAll(Long tgChatId);
 }

@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import ru.tinkoff.edu.java.scrapper.exception.BadRequestException;
+import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
+import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
@@ -66,13 +69,13 @@ public class LinksController implements Links {
             AddLinkRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-
-            LinkResponse response = linksService.addLink(tgChatId,body);
-
+            LinkResponse response = linksService.addLink(tgChatId, body);
+            if (response.getId() < 0) {
+                throw new DataAlreadyExistException("Ссылка уже существует у этого пользователя");
+            }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new BadRequestException("Некоректный запрос");
     }
 
     @Override
@@ -93,13 +96,13 @@ public class LinksController implements Links {
             RemoveLinkRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            LinkResponse build = LinkResponse.builder()
-                                             .id(1L)
-                                             .url(body.getLink())
-                                             .build();
-            return new ResponseEntity<>(build, HttpStatus.OK);
+            LinkResponse response = linksService.removeLink(tgChatId, body);
+            if (response.getId() < 0) {
+                throw new DataNotFoundException(
+                        "Ссылки: " + body.getLink() + " не существует у пользователя с id=" + tgChatId);
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new BadRequestException("Некоректный запрос");
     }
 }
