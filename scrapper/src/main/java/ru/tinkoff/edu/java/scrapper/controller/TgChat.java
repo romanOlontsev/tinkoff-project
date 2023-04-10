@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.tinkoff.edu.java.scrapper.model.response.ApiErrorResponse;
+import ru.tinkoff.edu.java.scrapper.model.response.TgChatResponse;
 
 @Validated
 public interface TgChat {
@@ -33,7 +34,7 @@ public interface TgChat {
                             schema = @Schema(implementation = ApiErrorResponse.class)))})
     @PostMapping(value = "/tg-chat/{id}",
             produces = {"application/json"})
-    ResponseEntity<Void> registerChat(
+    ResponseEntity<TgChatResponse> registerChat(
             @Parameter(
                     in = ParameterIn.PATH,
                     required = true,
@@ -63,7 +64,7 @@ public interface TgChat {
                             schema = @Schema(implementation = ApiErrorResponse.class)))})
     @DeleteMapping(value = "/tg-chat/{id}",
             produces = {"application/json"})
-    ResponseEntity<Void> deleteChat(
+    ResponseEntity<TgChatResponse> deleteChat(
             @Parameter(
                     in = ParameterIn.PATH,
                     required = true,

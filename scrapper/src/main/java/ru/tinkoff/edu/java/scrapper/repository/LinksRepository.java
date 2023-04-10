@@ -11,4 +11,6 @@ public interface LinksRepository {
     LinkResponse remove(Long tgChatId, RemoveLinkRequest request);
 
     ListLinksResponse findAll(Long tgChatId);
+
+    Boolean chatIsExists(Long tgChatId);
 }

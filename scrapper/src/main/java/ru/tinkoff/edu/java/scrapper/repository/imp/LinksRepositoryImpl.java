@@ -1,23 +1,18 @@
 package ru.tinkoff.edu.java.scrapper.repository.imp;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.exception.BadRequestException;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.repository.LinksRepository;
 
+import java.net.URI;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 
 @Repository
 public class LinksRepositoryImpl implements LinksRepository {
@@ -29,9 +24,7 @@ public class LinksRepositoryImpl implements LinksRepository {
     }
 
     @Override
-    @Transactional
     public LinkResponse add(Long tgChatId, AddLinkRequest request) {
-//        String query = "INSERT INTO link_info.link(url, chat_id) VALUES (?, ?)";
         String query = "INSERT INTO link_info.link(url, chat_id) " +
                 "SELECT ?,? " +
                 "WHERE NOT EXISTS(" +
@@ -60,7 +53,6 @@ public class LinksRepositoryImpl implements LinksRepository {
     }
 
     @Override
-    @Transactional
     public LinkResponse remove(Long tgChatId, RemoveLinkRequest request) {
         String query = "DELETE FROM link_info.link " +
                 "WHERE chat_id=? AND url=?";
@@ -84,6 +76,24 @@ public class LinksRepositoryImpl implements LinksRepository {
 
     @Override
     public ListLinksResponse findAll(Long tgChatId) {
-        return null;
+        String query = "SELECT * FROM link_info.link " +
+                "WHERE chat_id=?";
+
+        ListLinksResponse listLinksResponse = new ListLinksResponse();
+        List<LinkResponse> responseList = jdbcTemplate.query(
+                query,
+                (rs, rowNum) -> LinkResponse.builder()
+                                            .id(rs.getLong("id"))
+                                            .url(URI.create(rs.getString("url")))
+                                            .build(),
+                tgChatId);
+        listLinksResponse.setLinks(responseList);
+        return listLinksResponse;
+    }
+
+    @Override
+    public Boolean chatIsExists(Long tgChatId) {
+        String query = "SELECT EXISTS(SELECT TRUE FROM link_info.link WHERE chat_id=?)";
+        return jdbcTemplate.queryForObject(query, Boolean.class, tgChatId);
     }
 }

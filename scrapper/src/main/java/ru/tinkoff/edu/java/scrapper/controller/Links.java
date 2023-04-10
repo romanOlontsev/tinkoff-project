@@ -24,7 +24,7 @@ public interface Links {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Ссылка успешно убрана",
+                    description = "Ссылки успешно получены",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ListLinksResponse.class))),

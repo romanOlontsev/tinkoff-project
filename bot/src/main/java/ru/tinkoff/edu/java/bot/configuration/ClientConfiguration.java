@@ -18,14 +18,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class ClientConfiguration {
     public static final int TIMEOUT = 5000;
-    @Value("${scrapper.base-url}")
+    @Value("${scrapper.webclient.base-url}")
     private URI baseUrl;
 
     @Bean
     public WebClient webClientWithTimeout() {
         final HttpClient httpClient = HttpClient
                 .create()
-//                .compress(true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
                 .responseTimeout(Duration.ofMillis(TIMEOUT))
                 .doOnConnected(connection -> {

@@ -12,24 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import ru.tinkoff.edu.java.scrapper.exception.BadRequestException;
-import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
-import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
-import ru.tinkoff.edu.java.scrapper.service.LinksService;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import ru.tinkoff.edu.java.scrapper.service.jdbc.JdbcLinksService;
 
 @RestController
 @RequiredArgsConstructor
 public class LinksController implements Links {
     private final HttpServletRequest request;
-
-    private final LinksService linksService;
+    private final JdbcLinksService jdbcLinksService;
 
     @Override
     public ResponseEntity<ListLinksResponse> getLinks(
@@ -41,14 +34,10 @@ public class LinksController implements Links {
             Long tgChatId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            ListLinksResponse listLinksResponse = new ListLinksResponse();
-            listLinksResponse.setLinks(List.of(LinkResponse.builder()
-                                                           .id(2L)
-                                                           .url(URI.create("https://habr.com/ru/companies/productivity_inside/articles/505430/"))
-                                                           .build()));
-            return new ResponseEntity<>(listLinksResponse, HttpStatus.OK);
+            ListLinksResponse links = jdbcLinksService.findAllLinksByTgChatId(tgChatId);
+            return new ResponseEntity<>(links, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new BadRequestException("Некоректный запрос");
     }
 
     @Override
@@ -69,10 +58,7 @@ public class LinksController implements Links {
             AddLinkRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            LinkResponse response = linksService.addLink(tgChatId, body);
-            if (response.getId() < 0) {
-                throw new DataAlreadyExistException("Ссылка уже существует у этого пользователя");
-            }
+            LinkResponse response = jdbcLinksService.addLink(tgChatId, body);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         throw new BadRequestException("Некоректный запрос");
@@ -96,11 +82,7 @@ public class LinksController implements Links {
             RemoveLinkRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            LinkResponse response = linksService.removeLink(tgChatId, body);
-            if (response.getId() < 0) {
-                throw new DataNotFoundException(
-                        "Ссылки: " + body.getLink() + " не существует у пользователя с id=" + tgChatId);
-            }
+            LinkResponse response = jdbcLinksService.removeLink(tgChatId, body);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         throw new BadRequestException("Некоректный запрос");
