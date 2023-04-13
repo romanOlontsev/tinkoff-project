@@ -34,7 +34,7 @@ public interface TgChat {
                             schema = @Schema(implementation = ApiErrorResponse.class)))})
     @PostMapping(value = "/tg-chat/{id}",
             produces = {"application/json"})
-    ResponseEntity<TgChatResponse> registerChat(
+    ResponseEntity<Void> registerChat(
             @Parameter(
                     in = ParameterIn.PATH,
                     required = true,
@@ -64,7 +64,7 @@ public interface TgChat {
                             schema = @Schema(implementation = ApiErrorResponse.class)))})
     @DeleteMapping(value = "/tg-chat/{id}",
             produces = {"application/json"})
-    ResponseEntity<TgChatResponse> deleteChat(
+    ResponseEntity<Void> deleteChat(
             @Parameter(
                     in = ParameterIn.PATH,
                     required = true,

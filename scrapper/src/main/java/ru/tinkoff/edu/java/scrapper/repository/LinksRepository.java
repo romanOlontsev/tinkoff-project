@@ -12,5 +12,7 @@ public interface LinksRepository {
 
     ListLinksResponse findAll(Long tgChatId);
 
+    ListLinksResponse findAllOrderByLastUpdate();
+
     Boolean chatIsExists(Long tgChatId);
 }

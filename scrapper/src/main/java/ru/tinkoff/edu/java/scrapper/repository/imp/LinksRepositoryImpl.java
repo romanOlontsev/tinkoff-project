@@ -92,6 +92,23 @@ public class LinksRepositoryImpl implements LinksRepository {
     }
 
     @Override
+    public ListLinksResponse findAllOrderByLastUpdate() {
+        String query = "SELECT * FROM link_info.link " +
+                "ORDER BY last_update";
+
+        ListLinksResponse listLinksResponse = new ListLinksResponse();
+        List<LinkResponse> responseList = jdbcTemplate.query(
+                query,
+                (rs, rowNum) -> LinkResponse.builder()
+                                            .id(rs.getLong("id"))
+                                            .url(URI.create(rs.getString("url")))
+                                            .build());
+        listLinksResponse.setLinks(responseList);
+        return listLinksResponse;
+    }
+
+
+    @Override
     public Boolean chatIsExists(Long tgChatId) {
         String query = "SELECT EXISTS(SELECT TRUE FROM link_info.link WHERE chat_id=?)";
         return jdbcTemplate.queryForObject(query, Boolean.class, tgChatId);

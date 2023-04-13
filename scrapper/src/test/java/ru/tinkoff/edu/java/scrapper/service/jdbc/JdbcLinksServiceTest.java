@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.container.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.exception.BadRequestException;
 import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
@@ -24,7 +26,6 @@ import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.repository.imp.LinksRepositoryImpl;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
-import ru.tinkoff.edu.java.scrapper.service.TgChatService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,16 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 class JdbcLinksServiceTest extends IntegrationEnvironment {
+    private LinkService linkService;
     @Value("${spring.datasource.url}")
     private String url;
     @Value("${spring.datasource.username}")
     private String username;
     @Value("${spring.datasource.password}")
     private String password;
-
-    private LinkService linkService;
-
-    private TgChatService chatService;
 
     @BeforeEach
     void setUp() {
@@ -73,6 +71,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void addLink_shouldThrowBadRequestException() {
         AddLinkRequest request = AddLinkRequest.builder()
                                                .link(URI.create("some.url"))
@@ -85,6 +85,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void addLink_shouldThrowDataAlreadyExistException() {
         AddLinkRequest request = AddLinkRequest.builder()
                                                .link(URI.create("Gaga.url"))
@@ -97,6 +99,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void addLink_shouldReturnExpectedResponse() {
         String expectedUrl = "some.url";
         LinkResponse expectedResponse = LinkResponse.builder()
@@ -104,8 +108,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
                                                     .url(URI.create(expectedUrl))
                                                     .build();
         LinkResponse response = linkService.addLink(6633L, AddLinkRequest.builder()
-                                                                        .link(URI.create(expectedUrl))
-                                                                        .build());
+                                                                         .link(URI.create(expectedUrl))
+                                                                         .build());
         assertAll(
                 () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
                 () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
@@ -113,6 +117,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void removeLink_shouldThrowBadRequestException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
                                                      .link(URI.create("some.url"))
@@ -125,6 +131,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void removeLink_shouldThrowDataNotFoundException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
                                                      .link(URI.create("some.url"))
@@ -137,6 +145,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void removeLink_shouldReturnExpectedResponse() {
         String expectedUrl = "some.url";
         LinkResponse expectedResponse = LinkResponse.builder()
@@ -144,8 +154,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
                                                     .url(URI.create(expectedUrl))
                                                     .build();
         LinkResponse response = linkService.removeLink(6633L, RemoveLinkRequest.builder()
-                                                                              .link(URI.create(expectedUrl))
-                                                                              .build());
+                                                                               .link(URI.create(expectedUrl))
+                                                                               .build());
         assertAll(
                 () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
                 () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
@@ -154,6 +164,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void findAllLinksByTgChatId_shouldThrowBadRequestException() {
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.findAllLinksByTgChatId(1000L))
@@ -163,6 +175,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void findAllLinksByTgChatId_shouldReturnExpectedResponse() {
         LinkResponse firstExpResponse = LinkResponse.builder()
                                                     .id(2L)
@@ -175,13 +189,6 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
         List<LinkResponse> expResponseList = List.of(firstExpResponse, secondExpResponse);
         ListLinksResponse expectedResponse = new ListLinksResponse();
         expectedResponse.setLinks(expResponseList);
-
-//        linkService.addLink(6633L, AddLinkRequest.builder()
-//                                                 .link(URI.create("first.url"))
-//                                                 .build());
-//        linkService.addLink(6633L, AddLinkRequest.builder()
-//                                                 .link(URI.create("second.url"))
-//                                                 .build());
 
         ListLinksResponse response = linkService.findAllLinksByTgChatId(6633L);
 

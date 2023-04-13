@@ -11,5 +11,6 @@ public interface LinkService {
     LinkResponse removeLink(Long tgChatId, RemoveLinkRequest request);
 
     ListLinksResponse findAllLinksByTgChatId(Long tgChatId);
+    ListLinksResponse findAllLinksOrderByLastUpdate();
 
 }

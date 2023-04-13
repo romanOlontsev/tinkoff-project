@@ -16,8 +16,8 @@ import ru.tinkoff.edu.java.scrapper.service.LinkService;
 @Service
 @RequiredArgsConstructor
 public class JdbcLinksService implements LinkService {
-
     private final LinksRepository linksRepository;
+
     @Override
     @Transactional
     public LinkResponse addLink(Long tgChatId, AddLinkRequest request) {
@@ -31,6 +31,7 @@ public class JdbcLinksService implements LinkService {
         }
         return response;
     }
+
     @Override
     @Transactional
     public LinkResponse removeLink(Long tgChatId, RemoveLinkRequest request) {
@@ -44,6 +45,13 @@ public class JdbcLinksService implements LinkService {
         }
         return response;
     }
+
+    @Override
+    @Transactional
+    public ListLinksResponse findAllLinksOrderByLastUpdate() {
+        return linksRepository.findAllOrderByLastUpdate();
+    }
+
     @Override
     @Transactional
     public ListLinksResponse findAllLinksByTgChatId(Long tgChatId) {

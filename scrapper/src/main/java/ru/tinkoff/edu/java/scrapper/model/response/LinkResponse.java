@@ -9,7 +9,9 @@ import java.net.URI;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class LinkResponse {
     private Long id;
     private URI url;
 }
+
