@@ -3,15 +3,19 @@ package ru.tinkoff.edu.java.scrapper.service.jdbc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.scrapper.dto.LinkWithUpdateDto;
 import ru.tinkoff.edu.java.scrapper.exception.BadRequestException;
 import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
 import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
+import ru.tinkoff.edu.java.scrapper.mapper.LinkMapper;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.repository.LinksRepository;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +52,11 @@ public class JdbcLinksService implements LinkService {
 
     @Override
     @Transactional
-    public ListLinksResponse findAllLinksOrderByLastUpdate() {
-        return linksRepository.findAllOrderByLastUpdate();
+    public List<LinkWithUpdateDto> findAllOldestLinksByLastUpdate() {
+        List<LinkResponse> links = linksRepository.findAllOrderByLastUpdate()
+                                                  .getLinks();
+        return linkMapper.linkResponseListToLinkWithUpdateDtoList(links);
+
     }
 
     @Override

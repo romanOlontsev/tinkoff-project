@@ -93,8 +93,13 @@ public class LinksRepositoryImpl implements LinksRepository {
 
     @Override
     public ListLinksResponse findAllOrderByLastUpdate() {
-        String query = "SELECT * FROM link_info.link " +
-                "ORDER BY last_update";
+        String query = "SELECT l1.*" +
+                "FROM link_info.link l1" +
+                "WHERE l1.id = (SELECT l2.id" +
+                "               FROM link_info.link l2" +
+                "               WHERE l2.chat_id = l1.chat_id" +
+                "               ORDER BY l2.last_update" +
+                "               LIMIT 1);";
 
         ListLinksResponse listLinksResponse = new ListLinksResponse();
         List<LinkResponse> responseList = jdbcTemplate.query(
