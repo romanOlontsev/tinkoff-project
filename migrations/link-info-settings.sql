@@ -1,4 +1,4 @@
 --liquibase formatted sql
 
---changeset admin:10
+--changeset admin:12
 SET TIME ZONE "Europe/Moscow";

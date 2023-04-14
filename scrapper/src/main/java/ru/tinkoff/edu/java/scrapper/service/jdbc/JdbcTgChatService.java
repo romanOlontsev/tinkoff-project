@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
 import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
+import ru.tinkoff.edu.java.scrapper.model.response.ListTgChatResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.TgChatResponse;
 import ru.tinkoff.edu.java.scrapper.repository.TgChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.TgChatService;
@@ -32,5 +33,10 @@ public class JdbcTgChatService implements TgChatService {
             throw new DataNotFoundException("Чат с id=" + tgChatId + " не найден");
         }
         return response;
+    }
+
+    @Override
+    public ListTgChatResponse findAll() {
+        return tgChatRepository.findAll();
     }
 }

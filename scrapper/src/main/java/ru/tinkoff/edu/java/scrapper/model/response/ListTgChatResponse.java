@@ -1,9 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,6 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class ListTgChatResponse {
     private List<TgChatResponse> tgChatList;
     private Integer size;

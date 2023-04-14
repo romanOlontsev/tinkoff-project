@@ -25,7 +25,9 @@ import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.repository.imp.LinksRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.repository.imp.TgChatRepositoryImpl;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
+import ru.tinkoff.edu.java.scrapper.service.TgChatService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,10 +53,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
 
     @BeforeEach
     void setUp() {
-        linkService = new JdbcLinksService(
-                new LinksRepositoryImpl(
-                        new JdbcTemplate(
-                                new DriverManagerDataSource(url, username, password))));
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(new DriverManagerDataSource(url, username, password));
+        linkService = new JdbcLinksService(new LinksRepositoryImpl(jdbcTemplate));
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              Database database = DatabaseFactory.getInstance()
@@ -88,13 +88,14 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void addLink_shouldThrowDataAlreadyExistException() {
-        AddLinkRequest request = AddLinkRequest.builder()
-                                               .link(URI.create("Gaga.url"))
-                                               .build();
+        AddLinkRequest addLinkRequest = AddLinkRequest.builder()
+                                                      .link(URI.create("Gaga.url"))
+                                                      .build();
+        linkService.addLink(99999L, addLinkRequest);
         assertAll(
-                () -> assertThatThrownBy(() -> linkService.addLink(333L, request))
+                () -> assertThatThrownBy(() -> linkService.addLink(99999L, addLinkRequest))
                         .isInstanceOf(DataAlreadyExistException.class)
-                        .hasMessageContaining("Ссылка: Gaga.url уже существует у пользователя с id=333")
+                        .hasMessageContaining("Ссылка: Gaga.url уже существует у пользователя с id=99999")
         );
     }
 
@@ -102,14 +103,14 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void addLink_shouldReturnExpectedResponse() {
-        String expectedUrl = "some.url";
+        String expectedUrl = "url";
+        LinkResponse response = linkService.addLink(333L, AddLinkRequest.builder()
+                                                                          .link(URI.create(expectedUrl))
+                                                                          .build());
         LinkResponse expectedResponse = LinkResponse.builder()
-                                                    .id(4L)
+                                                    .id(5L)
                                                     .url(URI.create(expectedUrl))
                                                     .build();
-        LinkResponse response = linkService.addLink(6633L, AddLinkRequest.builder()
-                                                                         .link(URI.create(expectedUrl))
-                                                                         .build());
         assertAll(
                 () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
                 () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
@@ -138,9 +139,9 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
                                                      .link(URI.create("some.url"))
                                                      .build();
         assertAll(
-                () -> assertThatThrownBy(() -> linkService.removeLink(333L, request))
+                () -> assertThatThrownBy(() -> linkService.removeLink(99999L, request))
                         .isInstanceOf(DataNotFoundException.class)
-                        .hasMessageContaining("Ссылка: some.url не существует у пользователя с id=333")
+                        .hasMessageContaining("Ссылка: some.url не существует у пользователя с id=99999")
         );
     }
 
@@ -149,13 +150,16 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     @Rollback
     void removeLink_shouldReturnExpectedResponse() {
         String expectedUrl = "some.url";
+        linkService.addLink(99999L, AddLinkRequest.builder()
+                                                  .link(URI.create(expectedUrl)).
+                                                  build());
+        LinkResponse response = linkService.removeLink(99999L, RemoveLinkRequest.builder()
+                                                                                .link(URI.create(expectedUrl))
+                                                                                .build());
         LinkResponse expectedResponse = LinkResponse.builder()
-                                                    .id(4L)
+                                                    .id(6L)
                                                     .url(URI.create(expectedUrl))
                                                     .build();
-        LinkResponse response = linkService.removeLink(6633L, RemoveLinkRequest.builder()
-                                                                               .link(URI.create(expectedUrl))
-                                                                               .build());
         assertAll(
                 () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
                 () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
@@ -178,19 +182,18 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void findAllLinksByTgChatId_shouldReturnExpectedResponse() {
-        LinkResponse firstExpResponse = LinkResponse.builder()
-                                                    .id(2L)
-                                                    .url(URI.create("first.url"))
-                                                    .build();
-        LinkResponse secondExpResponse = LinkResponse.builder()
-                                                     .id(3L)
-                                                     .url(URI.create("second.url"))
-                                                     .build();
+        System.out.println(linkService.findAllLinksByTgChatId(99999L));
+        LinkResponse firstExpResponse = linkService.addLink(99999L, AddLinkRequest.builder()
+                                                                                  .link(URI.create("first.url"))
+                                                                                  .build());
+        LinkResponse secondExpResponse = linkService.addLink(99999L, AddLinkRequest.builder()
+                                                                                   .link(URI.create("second.url"))
+                                                                                   .build());
         List<LinkResponse> expResponseList = List.of(firstExpResponse, secondExpResponse);
         ListLinksResponse expectedResponse = new ListLinksResponse();
         expectedResponse.setLinks(expResponseList);
 
-        ListLinksResponse response = linkService.findAllLinksByTgChatId(6633L);
+        ListLinksResponse response = linkService.findAllLinksByTgChatId(99999L);
 
         assertAll(
                 () -> assertThat(response.getLinks()

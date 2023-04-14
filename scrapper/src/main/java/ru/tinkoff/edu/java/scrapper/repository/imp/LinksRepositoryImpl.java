@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.tinkoff.edu.java.scrapper.dto.LinkResponseDto;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
@@ -12,6 +13,7 @@ import ru.tinkoff.edu.java.scrapper.repository.LinksRepository;
 
 import java.net.URI;
 import java.sql.PreparedStatement;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
@@ -92,30 +94,45 @@ public class LinksRepositoryImpl implements LinksRepository {
     }
 
     @Override
-    public ListLinksResponse findAllOrderByLastUpdate() {
-        String query = "SELECT l1.*" +
-                "FROM link_info.link l1" +
-                "WHERE l1.id = (SELECT l2.id" +
-                "               FROM link_info.link l2" +
-                "               WHERE l2.chat_id = l1.chat_id" +
-                "               ORDER BY l2.last_update" +
-                "               LIMIT 1);";
+    public List<LinkResponseDto> findOneOldestLinksByLastCheckForEachUser() {
+        String query = "SELECT l1.* " +
+                "FROM link_info.link l1 " +
+                "WHERE l1.id = (SELECT l2.id " +
+                "FROM link_info.link l2 " +
+                "WHERE l2.chat_id = l1.chat_id " +
+                "ORDER BY l2.last_check " +
+                "LIMIT 1);";
 
-        ListLinksResponse listLinksResponse = new ListLinksResponse();
-        List<LinkResponse> responseList = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 query,
-                (rs, rowNum) -> LinkResponse.builder()
-                                            .id(rs.getLong("id"))
-                                            .url(URI.create(rs.getString("url")))
-                                            .build());
-        listLinksResponse.setLinks(responseList);
-        return listLinksResponse;
+                (rs, rowNum) -> LinkResponseDto.builder()
+                                               .id(rs.getLong("id"))
+                                               .url(URI.create(rs.getString("url")))
+                                               .lastUpdate(rs.getObject("last_update", OffsetDateTime.class))
+                                               .lastCheck(rs.getObject("last_check", OffsetDateTime.class))
+                                               .build());
+    }
+
+    @Override
+    public void setLastCheck(Long id) {
+        String query = "UPDATE link_info.link " +
+                "SET last_check = ? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(query, OffsetDateTime.now(), id);
+    }
+
+    @Override
+    public void setLastUpdate(Long id, OffsetDateTime update) {
+        String query = "UPDATE link_info.link " +
+                "SET last_check = ?, last_update=? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(query, OffsetDateTime.now(), update, id);
     }
 
 
     @Override
     public Boolean chatIsExists(Long tgChatId) {
-        String query = "SELECT EXISTS(SELECT TRUE FROM link_info.link WHERE chat_id=?)";
+        String query = "SELECT EXISTS(SELECT TRUE FROM link_info.chat WHERE chat_id=?)";
         return jdbcTemplate.queryForObject(query, Boolean.class, tgChatId);
     }
 }

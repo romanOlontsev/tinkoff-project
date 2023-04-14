@@ -1,11 +1,12 @@
 package ru.tinkoff.edu.java.scrapper.service;
 
-import ru.tinkoff.edu.java.scrapper.dto.LinkWithUpdateDto;
+import ru.tinkoff.edu.java.scrapper.dto.LinkResponseDto;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface LinkService {
@@ -15,6 +16,9 @@ public interface LinkService {
 
     ListLinksResponse findAllLinksByTgChatId(Long tgChatId);
 
-    List<LinkWithUpdateDto> findAllOldestLinksByLastUpdate();
+    List<LinkResponseDto> findAllOldestLinksByLastCheck();
 
+    void setLastCheck(Long id);
+
+    void setLastUpdate(Long id, OffsetDateTime update);
 }

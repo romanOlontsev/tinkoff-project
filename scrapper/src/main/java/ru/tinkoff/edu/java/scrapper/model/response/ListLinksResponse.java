@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class ListLinksResponse {
     private List<LinkResponse> links;
     private Integer size;
