@@ -23,7 +23,7 @@ public class UpdatesController implements Updates {
                     schema = @Schema())
             @Valid
             @RequestBody LinkUpdateRequest body) {
-        log.info("Have a message" + body.toString());
+        log.info("Have a message: " + body.toString());
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

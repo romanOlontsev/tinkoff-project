@@ -9,9 +9,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class LinkUpdateRequest {
-    private Long id;
+    private Long tgChat;
     private String url;
     private String description;
-    private List<Long> tgChatIds;
 }

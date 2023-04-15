@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset admin:15
+--changeset admin:17
 CREATE SCHEMA IF NOT EXISTS link_info;
 CREATE TABLE IF NOT EXISTS link_info.chat
 (
