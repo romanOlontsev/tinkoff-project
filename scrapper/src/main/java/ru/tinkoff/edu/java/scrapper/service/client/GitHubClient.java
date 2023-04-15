@@ -15,8 +15,6 @@ import ru.tinkoff.edu.java.scrapper.model.response.GitHubRepositoryInfoResponse;
 public class GitHubClient {
     @Qualifier("gitHubClientWithTimeout")
     private final WebClient webClient;
-    @Value("${github.webclient.base-url}")
-    private String baseUrl;
 
     public Mono<GitHubRepositoryInfoResponse> getGitHubRepositoryInfo(GitHubResultRecord repository) {
 

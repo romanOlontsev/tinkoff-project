@@ -24,6 +24,7 @@
         <jetbrains-annotations.version>23.1.0</jetbrains-annotations.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-surefire-failsafe.version>3.0.0</maven-surefire-failsafe.version>
+        <testcontainers.version>1.17.6</testcontainers.version>
     </properties>
 
     <dependencyManagement>
@@ -47,6 +48,13 @@
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains-annotations.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -97,7 +105,6 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-failsafe.version}</version>
                 </plugin>
-
             </plugins>
         </pluginManagement>
     </build>

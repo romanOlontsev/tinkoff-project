@@ -12,13 +12,9 @@ import java.util.List;
 @Builder
 public class ApiErrorResponse {
     private String description;
-
     private String code;
-
     private String exceptionName;
-
     private String exceptionMessage;
-
     private List<String> stacktrace;
 
     public ApiErrorResponse addStacktraceItem(String stacktraceItem) {
@@ -28,5 +24,4 @@ public class ApiErrorResponse {
         this.stacktrace.add(stacktraceItem);
         return this;
     }
-
 }

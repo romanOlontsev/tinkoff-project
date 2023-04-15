@@ -16,8 +16,11 @@ public class StackOverflowQuestionInfoResponse {
     @JsonProperty("has_more")
     private Boolean hasMore;
 
-    @Data
+    @Getter
+    @Setter
+    @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     private static class Items {
         private List<String> tags;
         private Owner owner;
@@ -29,8 +32,11 @@ public class StackOverflowQuestionInfoResponse {
         private String title;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     private static class Owner {
         @JsonProperty("account_id")
         private Long accountId;
