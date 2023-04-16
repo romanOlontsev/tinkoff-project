@@ -5,10 +5,16 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponseDto;
+import ru.tinkoff.edu.java.scrapper.dto.UpdatesDto;
+import ru.tinkoff.edu.java.scrapper.dto.updates.GitHubUpdatesDto;
+import ru.tinkoff.edu.java.scrapper.dto.updates.StackOverflowUpdatesDto;
+import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
+import ru.tinkoff.edu.java.scrapper.model.response.GitHubRepositoryInfoResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
+import ru.tinkoff.edu.java.scrapper.model.response.StackOverflowQuestionInfoResponse;
 import ru.tinkoff.edu.java.scrapper.repository.LinksRepository;
 
 import java.net.URI;
@@ -108,9 +114,40 @@ public class LinksRepositoryImpl implements LinksRepository {
                 (rs, rowNum) -> LinkResponseDto.builder()
                                                .id(rs.getLong("id"))
                                                .url(URI.create(rs.getString("url")))
+                                               .type(rs.getString("type"))
                                                .lastUpdate(rs.getObject("last_update", OffsetDateTime.class))
                                                .lastCheck(rs.getObject("last_check", OffsetDateTime.class))
                                                .build());
+    }
+
+    @Override
+    public UpdatesDto findUpdatesByLinkId(Long linkId, String type) {
+        String query;
+        switch (type) {
+            case "github" -> {
+                query = "SELECT * FROM link_info.git_hub_updates WHERE id=?";
+                return jdbcTemplate.queryForObject(
+                        query,
+                        (rs, rowNum) -> GitHubUpdatesDto.builder()
+                                                        .id(rs.getLong("id"))
+                                                        .forksCount(rs.getInt("fork_count"))
+                                                        .watchers(rs.getInt("watchers"))
+                                                        .build(),
+                        linkId);
+            }
+            case "stack" -> {
+                query = "SELECT * FROM link_info.stackoverflow_updates WHERE id=?";
+                return jdbcTemplate.queryForObject(
+                        query,
+                        (rs, rowNum) -> StackOverflowUpdatesDto.builder()
+                                                               .id(rs.getLong("id"))
+                                                               .answerCount(rs.getInt("answer_count"))
+                                                               .isAnswered(rs.getBoolean("is_answered"))
+                                                               .build(),
+                        linkId);
+            }
+            default -> throw new DataNotFoundException("Updates for link with id=" + linkId + " not found");
+        }
     }
 
     @Override
@@ -122,11 +159,37 @@ public class LinksRepositoryImpl implements LinksRepository {
     }
 
     @Override
-    public void setLastUpdate(Long id, OffsetDateTime update) {
+    public void setLastUpdateDate(Long id, OffsetDateTime update) {
         String query = "UPDATE link_info.link " +
                 "SET last_check = ?, last_update=? " +
                 "WHERE id = ?";
         jdbcTemplate.update(query, OffsetDateTime.now(), update, id);
+    }
+
+    @Override
+    public void setGitHubUpdate(Long id, GitHubRepositoryInfoResponse response) {
+        String query = "UPDATE link_info.git_hub_updates " +
+                "SET fork_count = ?, watchers=? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(query, response.getForksCount(), response.getWatchers(), id);
+    }
+
+    @Override
+    public void setStackOverflowUpdate(Long id, StackOverflowQuestionInfoResponse response) {
+        Boolean isAnswered = response.getItems()
+                                     .stream()
+                                     .map(StackOverflowQuestionInfoResponse.Items::isAnswered)
+                                     .findFirst()
+                                     .orElse(null);
+        Integer answerCount = response.getItems()
+                                      .stream()
+                                      .map(StackOverflowQuestionInfoResponse.Items::getAnswerCount)
+                                      .findFirst()
+                                      .orElse(null);
+        String query = "UPDATE link_info.stackoverflow_updates " +
+                "SET is_answered = ?, answer_count=? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(query, isAnswered, answerCount, id);
     }
 
 

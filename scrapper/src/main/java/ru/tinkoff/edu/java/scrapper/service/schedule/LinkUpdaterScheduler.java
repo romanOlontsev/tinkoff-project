@@ -12,6 +12,7 @@ import ru.tinkoff.edu.java.parser.result.GitHubResultRecord;
 import ru.tinkoff.edu.java.parser.result.ParseResult;
 import ru.tinkoff.edu.java.parser.result.StackOverflowResultRecord;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponseDto;
+import ru.tinkoff.edu.java.scrapper.dto.updates.GitHubUpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.request.LinkUpdateRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.GitHubRepositoryInfoResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.StackOverflowQuestionInfoResponse;
@@ -22,7 +23,9 @@ import ru.tinkoff.edu.java.scrapper.service.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.service.client.StackOverflowClient;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -41,40 +44,44 @@ public class LinkUpdaterScheduler implements LinkUpdater {
     public void update() {
         List<LinkResponseDto> allOldestLinksByLastUpdate = linkService.findAllOldestLinksByLastCheck();
 
-        getUpdateForGitHubLinks(allOldestLinksByLastUpdate);
-        getUpdateForStackOverflowLinks(allOldestLinksByLastUpdate);
+        getUpdatesForGitHubLinks(allOldestLinksByLastUpdate);
+//        getUpdatesForStackOverflowLinks(allOldestLinksByLastUpdate);
     }
 
-    private void getUpdateForGitHubLinks(List<LinkResponseDto> allOldestLinksByLastUpdate) {
-        String gitHubLink = supportedLinks[0];
-        allOldestLinksByLastUpdate.stream()
-                                  .filter(it -> it.getUrl()
-                                                  .toString()
-                                                  .startsWith(gitHubLink))
-                                  .forEach(it -> {
-                                      ParseResult parseResult = parser.checkLink(it.getUrl()
-                                                                                   .toString());
-                                      GitHubRepositoryInfoResponse response = gitHubClient
-                                              .getGitHubRepositoryInfo((GitHubResultRecord) parseResult)
-                                              .block();
-                                      if (response != null && response.getUpdatedAt()
-                                                                      .isAfter(it.getLastUpdate())) {
-                                          linkService.setLastUpdate(it.getId(), response.getUpdatedAt());
-                                          ResponseEntity<Void> messageForBot = sendRequestToBot(it);
+    private void getUpdatesForGitHubLinks(List<LinkResponseDto> allOldestLinksByLastUpdate) {
+        allOldestLinksByLastUpdate
+                .stream()
+                .filter(it -> it.getType()
+                                .equals("github"))
+                .forEach(it -> {
+                    ParseResult parseResult = parser.checkLink(it.getUrl()
+                                                                 .toString());
+                    GitHubRepositoryInfoResponse response = gitHubClient
+                            .getGitHubRepositoryInfo((GitHubResultRecord) parseResult)
+                            .block();
+                    if (response != null && response.getUpdatedAt()
+                                                    .isAfter(it.getLastUpdate())) {
 
-                                          log.info("Get update for: id=" +
-                                                  it.getId() +
-                                                  "---" +
-                                                  it.getUrl() +
-                                                  "--- bot answer: " +
-                                                  (messageForBot != null ? messageForBot.getStatusCode() : "null"));
-                                      } else {
-                                          linkService.setLastCheck(it.getId());
-                                      }
-                                  });
+                        GitHubUpdatesDto updates = (GitHubUpdatesDto) linkService
+                                .findUpdatesByLinkIdAndLinkType(it.getId(), it.getType());
+
+                        Map<String, String> gitHubChanges = getGitHubChanges(updates, response);
+
+//
+//                                          CHANGE!
+                        linkService.setGitHubLastUpdate(it.getId(), response);
+
+                        ResponseEntity<Void> messageForBot = sendRequestToBot(it, gitHubChanges);
+
+                        log.info("Get update for: id=" + it.getId() + " --- " + it.getUrl() + " --- " + gitHubChanges +
+                                " --- bot answer: " + (messageForBot != null ? messageForBot.getStatusCode() : "null"));
+                    } else {
+                        linkService.setLastCheck(it.getId());
+                    }
+                });
     }
 
-    private void getUpdateForStackOverflowLinks(List<LinkResponseDto> allOldestLinksByLastUpdate) {
+    private void getUpdatesForStackOverflowLinks(List<LinkResponseDto> allOldestLinksByLastUpdate) {
         String stackOverFlowLink = supportedLinks[1];
         allOldestLinksByLastUpdate.stream()
                                   .filter(it -> it.getUrl()
@@ -90,12 +97,12 @@ public class LinkUpdaterScheduler implements LinkUpdater {
                                           OffsetDateTime responseLastUpdate =
                                                   response.getItems()
                                                           .stream()
-                                                          .map(StackOverflowQuestionInfoResponse.Items::getLastEditDate)
+                                                          .map(StackOverflowQuestionInfoResponse.Items::getLastActivityDate)
                                                           .findFirst()
                                                           .orElse(it.getLastUpdate());
                                           if (responseLastUpdate.isAfter(it.getLastUpdate())) {
-                                              linkService.setLastUpdate(it.getId(), responseLastUpdate);
-                                              ResponseEntity<Void> messageForBot = sendRequestToBot(it);
+                                              linkService.setStackOverflowLastUpdate(it.getId(), response);
+                                              ResponseEntity<Void> messageForBot = sendRequestToBot(it, new HashMap<>());
                                               log.info("Get update for: id=" +
                                                       it.getId() +
                                                       " --- " +
@@ -110,13 +117,25 @@ public class LinkUpdaterScheduler implements LinkUpdater {
     }
 
     @Nullable
-    private ResponseEntity<Void> sendRequestToBot(LinkResponseDto it) {
+    private ResponseEntity<Void> sendRequestToBot(LinkResponseDto it, Map<String, String> changes) {
         return botClient.postLinks(LinkUpdateRequest.builder()
                                                     .tgChat(it.getId())
                                                     .description("Update available")
                                                     .url(it.getUrl()
                                                            .toString())
+                                                    .changes(changes)
                                                     .build())
                         .block();
+    }
+
+    private Map<String, String> getGitHubChanges(GitHubUpdatesDto updates, GitHubRepositoryInfoResponse response) {
+        Map<String, String> changes = new HashMap<>();
+        if (response.getWatchers() > updates.getWatchers()) {
+            changes.put("watchers", "+" + (response.getWatchers() - updates.getWatchers()));
+        }
+        if (response.getForksCount() > updates.getForksCount()) {
+            changes.put("fork_count", "+" + (response.getForksCount() - updates.getForksCount()));
+        }
+        return changes;
     }
 }
