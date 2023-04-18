@@ -24,10 +24,8 @@ import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
-import ru.tinkoff.edu.java.scrapper.repository.imp.LinksRepositoryImpl;
-import ru.tinkoff.edu.java.scrapper.repository.imp.TgChatRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.repository.imp.LinkRepositoryImpl;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
-import ru.tinkoff.edu.java.scrapper.service.TgChatService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,7 +52,7 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     @BeforeEach
     void setUp() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(new DriverManagerDataSource(url, username, password));
-        linkService = new JdbcLinksService(new LinksRepositoryImpl(jdbcTemplate));
+        linkService = new JdbcLinksService(new LinkRepositoryImpl(jdbcTemplate));
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              Database database = DatabaseFactory.getInstance()

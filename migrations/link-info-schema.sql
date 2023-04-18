@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS link_info.link
     last_check      timestamp    NOT NULL DEFAULT '1970-01-01 00:00:00',
     chat_id         bigint       NOT NULL REFERENCES link_info.chat ON DELETE CASCADE
 );
-CREATE TABLE IF NOT EXISTS link_info.git_hub_updates
+CREATE TABLE IF NOT EXISTS link_info.github_updates
 (
     id              bigint    NOT NULL PRIMARY KEY REFERENCES link_info.link ON DELETE CASCADE,
     forks_count     int       NOT NULL DEFAULT 0,

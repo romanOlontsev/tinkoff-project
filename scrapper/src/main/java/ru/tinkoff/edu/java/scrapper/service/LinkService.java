@@ -17,7 +17,6 @@ public interface LinkService {
 
     LinkResponse removeLink(Long tgChatId, RemoveLinkRequest request);
 
-    @Transactional
     void setStackOverflowLastUpdate(Long id, StackOverflowQuestionInfoResponse response);
 
     ListLinksResponse findAllLinksByTgChatId(Long tgChatId);

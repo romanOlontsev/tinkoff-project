@@ -11,4 +11,5 @@ import java.net.URI;
 @Builder
 public class AddLinkRequest {
     private URI link;
+    private String type;
 }
