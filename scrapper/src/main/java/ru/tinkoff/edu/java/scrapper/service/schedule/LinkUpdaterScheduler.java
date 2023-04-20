@@ -3,7 +3,6 @@ package ru.tinkoff.edu.java.scrapper.service.schedule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,15 +10,13 @@ import ru.tinkoff.edu.java.parser.Parser;
 import ru.tinkoff.edu.java.parser.result.GitHubResultRecord;
 import ru.tinkoff.edu.java.parser.result.ParseResult;
 import ru.tinkoff.edu.java.parser.result.StackOverflowResultRecord;
-import ru.tinkoff.edu.java.scrapper.dto.LinkResponseDto;
-import ru.tinkoff.edu.java.scrapper.dto.UpdatesDto;
-import ru.tinkoff.edu.java.scrapper.dto.updates.GitHubUpdatesDto;
-import ru.tinkoff.edu.java.scrapper.dto.updates.StackOverflowUpdatesDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.LinkResponseDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.updates.GitHubUpdatesDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.updates.StackOverflowUpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.request.LinkUpdateRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.GitHubRepositoryInfoResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.StackOverflowQuestionInfoResponse;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
-import ru.tinkoff.edu.java.scrapper.service.LinkUpdater;
 import ru.tinkoff.edu.java.scrapper.service.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.service.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.service.client.StackOverflowClient;
@@ -32,14 +29,13 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LinkUpdaterScheduler implements LinkUpdater {
+public class LinkUpdaterScheduler {
     private final LinkService linkService;
     private final GitHubClient gitHubClient;
     private final StackOverflowClient stackOverflowClient;
     private final BotClient botClient;
     private final Parser parser;
 
-    @Override
     @Scheduled(fixedDelayString = "#{@schedulingIntervalMillis}")
     public void update() {
         List<LinkResponseDto> allOldestLinksByLastUpdate = linkService.findAllOldestLinksByLastCheck();

@@ -1,6 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.repository;
 
-import ru.tinkoff.edu.java.scrapper.dto.LinkResponseDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.LinkResponseDto;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;

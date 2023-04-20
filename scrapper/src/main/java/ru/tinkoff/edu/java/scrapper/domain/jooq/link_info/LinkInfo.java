@@ -4,21 +4,19 @@
 package ru.tinkoff.edu.java.scrapper.domain.jooq.link_info;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
-
 import ru.tinkoff.edu.java.scrapper.domain.jooq.DefaultCatalog;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.Chat;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.GithubUpdates;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.Link;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.StackoverflowUpdates;
+
+import javax.annotation.processing.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**

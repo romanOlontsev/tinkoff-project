@@ -1,7 +1,7 @@
-package ru.tinkoff.edu.java.scrapper.dto.updates;
+package ru.tinkoff.edu.java.scrapper.model.dto.updates;
 
 import lombok.*;
-import ru.tinkoff.edu.java.scrapper.dto.UpdatesDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.UpdatesDto;
 
 @Getter
 @Setter

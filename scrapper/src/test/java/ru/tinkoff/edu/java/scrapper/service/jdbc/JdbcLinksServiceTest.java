@@ -24,7 +24,8 @@ import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
-import ru.tinkoff.edu.java.scrapper.repository.imp.LinkRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkUpdatesRepository;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
 
 import java.io.File;
@@ -52,7 +53,8 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     @BeforeEach
     void setUp() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(new DriverManagerDataSource(url, username, password));
-        linkService = new JdbcLinksService(new LinkRepositoryImpl(jdbcTemplate));
+        linkService = new JdbcLinksService(
+                new JdbcLinkRepository(jdbcTemplate), new JdbcLinkUpdatesRepository(jdbcTemplate));
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              Database database = DatabaseFactory.getInstance()
@@ -74,6 +76,7 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     void addLink_shouldThrowBadRequestException() {
         AddLinkRequest request = AddLinkRequest.builder()
                                                .link(URI.create("some.url"))
+                                               .type("github")
                                                .build();
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.addLink(1000L, request))
@@ -88,6 +91,7 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     void addLink_shouldThrowDataAlreadyExistException() {
         AddLinkRequest addLinkRequest = AddLinkRequest.builder()
                                                       .link(URI.create("Gaga.url"))
+                                                      .type("github")
                                                       .build();
         linkService.addLink(99999L, addLinkRequest);
         assertAll(
@@ -103,8 +107,9 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     void addLink_shouldReturnExpectedResponse() {
         String expectedUrl = "url";
         LinkResponse response = linkService.addLink(333L, AddLinkRequest.builder()
-                                                                          .link(URI.create(expectedUrl))
-                                                                          .build());
+                                                                        .link(URI.create(expectedUrl))
+                                                                        .type("github")
+                                                                        .build());
         LinkResponse expectedResponse = LinkResponse.builder()
                                                     .id(5L)
                                                     .url(URI.create(expectedUrl))
@@ -149,8 +154,9 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     void removeLink_shouldReturnExpectedResponse() {
         String expectedUrl = "some.url";
         linkService.addLink(99999L, AddLinkRequest.builder()
-                                                  .link(URI.create(expectedUrl)).
-                                                  build());
+                                                  .link(URI.create(expectedUrl))
+                                                  .type("github")
+                                                  .build());
         LinkResponse response = linkService.removeLink(99999L, RemoveLinkRequest.builder()
                                                                                 .link(URI.create(expectedUrl))
                                                                                 .build());
@@ -183,9 +189,11 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
         System.out.println(linkService.findAllLinksByTgChatId(99999L));
         LinkResponse firstExpResponse = linkService.addLink(99999L, AddLinkRequest.builder()
                                                                                   .link(URI.create("first.url"))
+                                                                                  .type("github")
                                                                                   .build());
         LinkResponse secondExpResponse = linkService.addLink(99999L, AddLinkRequest.builder()
                                                                                    .link(URI.create("second.url"))
+                                                                                   .type("github")
                                                                                    .build());
         List<LinkResponse> expResponseList = List.of(firstExpResponse, secondExpResponse);
         ListLinksResponse expectedResponse = new ListLinksResponse();

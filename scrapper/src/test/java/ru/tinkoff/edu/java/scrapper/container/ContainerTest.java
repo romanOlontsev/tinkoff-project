@@ -8,7 +8,6 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,7 +57,7 @@ public class ContainerTest extends IntegrationEnvironment {
 
             assertAll("container start test",
                     () -> assertThat(rs.getLong("chat_id")).isEqualTo(333),
-                    () -> assertThat(rs.getString("url")).isEqualTo("Gaga.url")
+                    () -> assertThat(rs.getString("url")).isEqualTo("https://github.com/Gadetych/my-first-blog")
             );
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());

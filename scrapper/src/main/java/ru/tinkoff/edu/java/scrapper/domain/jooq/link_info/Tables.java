@@ -4,12 +4,12 @@
 package ru.tinkoff.edu.java.scrapper.domain.jooq.link_info;
 
 
-import javax.annotation.processing.Generated;
-
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.Chat;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.GithubUpdates;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.Link;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.StackoverflowUpdates;
+
+import javax.annotation.processing.Generated;
 
 
 /**

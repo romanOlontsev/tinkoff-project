@@ -20,7 +20,7 @@ import ru.tinkoff.edu.java.scrapper.container.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
 import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.response.TgChatResponse;
-import ru.tinkoff.edu.java.scrapper.repository.imp.TgChatRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcTgChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.TgChatService;
 
 import java.io.File;
@@ -50,7 +50,7 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
         jdbcTemplate = new JdbcTemplate(
                 new DriverManagerDataSource(url, username, password));
         tgChatService = new JdbcTgChatService(
-                new TgChatRepositoryImpl(jdbcTemplate));
+                new JdbcTgChatRepository(jdbcTemplate));
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              Database database = DatabaseFactory.getInstance()
