@@ -16,7 +16,7 @@ public interface LinkRepository {
 
     ListLinksResponse findAll(Long tgChatId);
 
-    List<LinkResponseDto> findOneOldestLinksByLastCheckForEachUser();
+    List<LinkResponseDto> findOneOldestLinkByLastCheckForEachUser();
 
     void setLastCheck(Long id);
 

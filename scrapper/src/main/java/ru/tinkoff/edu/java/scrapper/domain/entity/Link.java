@@ -15,11 +15,10 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @ToString
 @Builder
+@EqualsAndHashCode
 public class Link {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    , generator = "link_seq")
-//    @SequenceGenerator(name = "link_seq", sequenceName = "link_id_seq")
     @Column(name = "id")
     private Long id;
 
@@ -29,15 +28,14 @@ public class Link {
     @Column(name = "type")
     private String type;
 
-//    @CreationTimestamp
-//    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_update")
     private OffsetDateTime lastUpdate;
 
     @Column(name = "last_check")
     private OffsetDateTime lastCheck;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id")
-    private Chat chatId;
+    @ToString.Exclude
+    private Chat chat;
 }

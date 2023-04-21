@@ -1,10 +1,10 @@
 package ru.tinkoff.edu.java.scrapper.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "chat", schema = "link_info")
@@ -13,12 +13,20 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Chat {
     @Id
     @Column(name = "chat_id")
     private Long tgChatId;
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
-//    @JoinColumn(name = "chat_id")
-//    private List<Link> links;
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+    @ToString.Exclude
+    private List<Link> links;
+
+    public void addLink(Link link) {
+        if (links == null) {
+            links = new ArrayList<>();
+        }
+        links.add(link);
+    }
 }

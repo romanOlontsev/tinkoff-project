@@ -8,6 +8,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.tinkoff.edu.java.parser.Parser;
 import ru.tinkoff.edu.java.parser.links.GitHubLinkParse;
 import ru.tinkoff.edu.java.parser.links.LinkParse;
@@ -18,7 +19,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Configuration
-//@EnableScheduling
+@EnableScheduling
 public class BeanConfig {
     @Value("${spring.datasource.url}")
     private String dbUrl;

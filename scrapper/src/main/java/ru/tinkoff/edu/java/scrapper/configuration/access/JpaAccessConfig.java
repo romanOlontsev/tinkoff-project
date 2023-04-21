@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.tinkoff.edu.java.scrapper.mapper.ChatMapper;
 import ru.tinkoff.edu.java.scrapper.mapper.LinkMapper;
+import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaGitHubUpdatesRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaLinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaStackOverflowUpdatesRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaTgChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
 import ru.tinkoff.edu.java.scrapper.service.TgChatService;
@@ -19,8 +21,14 @@ public class JpaAccessConfig {
     @Bean
     public LinkService linkService(JpaLinkRepository jpaLinkRepository,
                                    JpaTgChatRepository jpaTgChatRepository,
-                                   LinkMapper linkMapper) {
-        return new JpaLinkService(jpaLinkRepository, jpaTgChatRepository, linkMapper);
+                                   LinkMapper linkMapper,
+                                   JpaGitHubUpdatesRepository gitHubUpdatesRepository,
+                                   JpaStackOverflowUpdatesRepository stackOverflowUpdatesRepository) {
+        return new JpaLinkService(jpaLinkRepository,
+                jpaTgChatRepository,
+                linkMapper,
+                gitHubUpdatesRepository,
+                stackOverflowUpdatesRepository);
     }
 
     @Bean

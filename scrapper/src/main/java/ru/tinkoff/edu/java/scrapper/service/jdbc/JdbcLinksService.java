@@ -56,7 +56,7 @@ public class JdbcLinksService implements LinkService {
     @Override
     @Transactional
     public List<LinkResponseDto> findAllOldestLinksByLastCheck() {
-        return linkRepository.findOneOldestLinksByLastCheckForEachUser();
+        return linkRepository.findOneOldestLinkByLastCheckForEachUser();
 
     }
 
