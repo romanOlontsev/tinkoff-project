@@ -1,27 +1,25 @@
 package ru.tinkoff.edu.java.scrapper.service.jdbc;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.dto.LinkResponseDto;
-import ru.tinkoff.edu.java.scrapper.dto.UpdatesDto;
 import ru.tinkoff.edu.java.scrapper.exception.BadRequestException;
 import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
 import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
+import ru.tinkoff.edu.java.scrapper.model.dto.LinkResponseDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.UpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.GitHubRepositoryInfoResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.StackOverflowQuestionInfoResponse;
-import ru.tinkoff.edu.java.scrapper.repository.LinkUpdatesRepository;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.LinkUpdatesRepository;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
 public class JdbcLinksService implements LinkService {
     private final LinkRepository linkRepository;
@@ -58,7 +56,7 @@ public class JdbcLinksService implements LinkService {
     @Override
     @Transactional
     public List<LinkResponseDto> findAllOldestLinksByLastCheck() {
-        return linkRepository.findOneOldestLinksByLastCheckForEachUser();
+        return linkRepository.findOneOldestLinkByLastCheckForEachUser();
 
     }
 

@@ -9,13 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import ru.tinkoff.edu.java.scrapper.service.jdbc.JdbcTgChatService;
+import ru.tinkoff.edu.java.scrapper.service.TgChatService;
 
 @RestController
 @RequiredArgsConstructor
 public class TgChatController implements TgChat {
     private final HttpServletRequest request;
-    private final JdbcTgChatService jdbcTgChatService;
+    private final TgChatService tgChatService;
 
     @Override
     public ResponseEntity<Void> registerChat(
@@ -24,7 +24,7 @@ public class TgChatController implements TgChat {
                     required = true,
                     schema = @Schema())
             @PathVariable Long id) {
-        jdbcTgChatService.registerChat(id);
+        tgChatService.registerChat(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -35,7 +35,7 @@ public class TgChatController implements TgChat {
                     required = true,
                     schema = @Schema())
             @PathVariable Long id) {
-        jdbcTgChatService.removeChat(id);
+        tgChatService.removeChat(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

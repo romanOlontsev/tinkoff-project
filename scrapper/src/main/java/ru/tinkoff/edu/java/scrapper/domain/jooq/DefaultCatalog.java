@@ -4,17 +4,15 @@
 package ru.tinkoff.edu.java.scrapper.domain.jooq;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Constants;
 import org.jooq.Schema;
 import org.jooq.impl.CatalogImpl;
-
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.LinkInfo;
+
+import javax.annotation.processing.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**

@@ -1,11 +1,7 @@
 package ru.tinkoff.edu.java.jooq;
+
 import org.jooq.codegen.GenerationTool;
-import org.jooq.meta.jaxb.Configuration;
-import org.jooq.meta.jaxb.Database;
-import org.jooq.meta.jaxb.Generate;
-import org.jooq.meta.jaxb.Generator;
-import org.jooq.meta.jaxb.Property;
-import org.jooq.meta.jaxb.Target;
+import org.jooq.meta.jaxb.*;
 
 public class JooqCodegen {
     public static void main(String[] args) throws Exception {

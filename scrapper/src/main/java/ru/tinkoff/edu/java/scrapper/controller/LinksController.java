@@ -16,13 +16,13 @@ import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
-import ru.tinkoff.edu.java.scrapper.service.jdbc.JdbcLinksService;
+import ru.tinkoff.edu.java.scrapper.service.LinkService;
 
 @RestController
 @RequiredArgsConstructor
 public class LinksController implements Links {
     private final HttpServletRequest request;
-    private final JdbcLinksService jdbcLinksService;
+    private final LinkService linkService;
 
     @Override
     public ResponseEntity<ListLinksResponse> getLinks(
@@ -34,7 +34,7 @@ public class LinksController implements Links {
             Long tgChatId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            ListLinksResponse links = jdbcLinksService.findAllLinksByTgChatId(tgChatId);
+            ListLinksResponse links = linkService.findAllLinksByTgChatId(tgChatId);
             return new ResponseEntity<>(links, HttpStatus.OK);
         }
         throw new BadRequestException("Некоректный запрос");
@@ -58,7 +58,7 @@ public class LinksController implements Links {
             AddLinkRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            LinkResponse response = jdbcLinksService.addLink(tgChatId, body);
+            LinkResponse response = linkService.addLink(tgChatId, body);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         throw new BadRequestException("Некоректный запрос");
@@ -82,7 +82,7 @@ public class LinksController implements Links {
             RemoveLinkRequest body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            LinkResponse response = jdbcLinksService.removeLink(tgChatId, body);
+            LinkResponse response = linkService.removeLink(tgChatId, body);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         throw new BadRequestException("Некоректный запрос");

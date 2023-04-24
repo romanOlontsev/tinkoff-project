@@ -4,10 +4,6 @@
 package ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.records;
 
 
-import java.beans.ConstructorProperties;
-
-import javax.annotation.processing.Generated;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Field;
@@ -15,8 +11,10 @@ import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.Row3;
 import org.jooq.impl.UpdatableRecordImpl;
-
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.GithubUpdates;
+
+import javax.annotation.processing.Generated;
+import java.beans.ConstructorProperties;
 
 
 /**

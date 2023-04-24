@@ -1,6 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.repository;
 
-import ru.tinkoff.edu.java.scrapper.dto.UpdatesDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.UpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.response.GitHubRepositoryInfoResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.StackOverflowQuestionInfoResponse;
 

@@ -4,14 +4,11 @@
 package ru.tinkoff.edu.java.scrapper.domain.jooq.link_info;
 
 
-import javax.annotation.processing.Generated;
-
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
-
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.Chat;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.GithubUpdates;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.Link;
@@ -20,6 +17,8 @@ import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.records.ChatRec
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.records.GithubUpdatesRecord;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.records.LinkRecord;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.records.StackoverflowUpdatesRecord;
+
+import javax.annotation.processing.Generated;
 
 
 /**

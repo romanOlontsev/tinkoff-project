@@ -2,7 +2,6 @@ package ru.tinkoff.edu.java.scrapper.model.response;
 
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.repository.imp;
+package ru.tinkoff.edu.java.scrapper.repository.jdbc;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -12,10 +12,10 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 @Repository
-public class TgChatRepositoryImpl implements TgChatRepository {
+public class JdbcTgChatRepository implements TgChatRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public TgChatRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public JdbcTgChatRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

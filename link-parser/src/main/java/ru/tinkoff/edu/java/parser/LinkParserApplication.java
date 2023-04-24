@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.parser;
 
-import ru.tinkoff.edu.java.parser.links.LinkParse;
 import ru.tinkoff.edu.java.parser.links.GitHubLinkParse;
+import ru.tinkoff.edu.java.parser.links.LinkParse;
 import ru.tinkoff.edu.java.parser.links.StackOverflowLinkParse;
 import ru.tinkoff.edu.java.parser.result.ParseResult;
 

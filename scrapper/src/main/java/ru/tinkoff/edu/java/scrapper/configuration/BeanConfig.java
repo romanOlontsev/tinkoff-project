@@ -1,6 +1,5 @@
 package ru.tinkoff.edu.java.scrapper.configuration;
 
-import jakarta.activation.DataSource;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.conf.RenderQuotedNames;

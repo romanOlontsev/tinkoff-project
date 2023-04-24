@@ -4,12 +4,11 @@
 package ru.tinkoff.edu.java.scrapper.domain.jooq.link_info.tables.pojos;
 
 
-import java.beans.ConstructorProperties;
-import java.io.Serializable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.Generated;
-
-import org.jetbrains.annotations.NotNull;
+import java.beans.ConstructorProperties;
+import java.io.Serializable;
 
 
 /**
