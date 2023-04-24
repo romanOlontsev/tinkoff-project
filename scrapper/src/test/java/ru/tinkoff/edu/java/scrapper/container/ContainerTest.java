@@ -8,6 +8,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +45,6 @@ public class ContainerTest extends IntegrationEnvironment {
             throw new RuntimeException(e);
         }
     }
-
     @Test
     void containerTest_shouldReturnTestRow() {
         String SQL = "SELECT * FROM link_info.chat c " +

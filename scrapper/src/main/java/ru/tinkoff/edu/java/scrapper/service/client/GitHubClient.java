@@ -17,11 +17,10 @@ public class GitHubClient {
     private final WebClient webClient;
 
     public Mono<GitHubRepositoryInfoResponse> getGitHubRepositoryInfo(GitHubResultRecord repository) {
-
         return webClient.get()
                         .uri(uriBuilder -> uriBuilder.path("/repos/{user}/{repo}")
                                                      .build(repository.userName(), repository.repository()))
-                        .accept(MediaType.valueOf("application/vnd.github+json"))
+//                        .accept(MediaType.valueOf("application/vnd.github+json"))
                         .retrieve()
                         .bodyToMono(GitHubRepositoryInfoResponse.class);
     }

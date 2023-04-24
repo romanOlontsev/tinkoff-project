@@ -36,4 +36,8 @@ public class GitHubRepositoryInfoResponse {
     private OffsetDateTime updatedAt;
     @JsonProperty("pushed_at")
     private OffsetDateTime pushedAt;
+    @JsonProperty("forks_count")
+    private Integer forksCount;
+    @JsonProperty("watchers")
+    private Integer watchers;
 }

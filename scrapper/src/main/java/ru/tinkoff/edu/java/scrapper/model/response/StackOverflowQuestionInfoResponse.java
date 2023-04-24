@@ -21,15 +21,21 @@ public class StackOverflowQuestionInfoResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    private static class Items {
+    public static class Items {
         private List<String> tags;
         private Owner owner;
         @JsonProperty("creation_date")
         private OffsetDateTime creationDate;
+        @JsonProperty("last_activity_date")
+        private OffsetDateTime lastActivityDate;
         @JsonProperty("question_id")
         private Long questionId;
         private String link;
         private String title;
+        @JsonProperty("is_answered")
+        private boolean isAnswered;
+        @JsonProperty("answer_count")
+        private Integer answerCount;
     }
 
     @Getter
@@ -37,7 +43,7 @@ public class StackOverflowQuestionInfoResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    private static class Owner {
+    public static class Owner {
         @JsonProperty("account_id")
         private Long accountId;
         @JsonProperty("user_id")
