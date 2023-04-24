@@ -34,9 +34,7 @@ public class JpaLinkService implements LinkService {
     private final JpaLinkRepository linkRepository;
     private final JpaTgChatRepository chatRepository;
     private final LinkMapper linkMapper;
-
     private final JpaGitHubUpdatesRepository gitHubUpdatesRepository;
-
     private final JpaStackOverflowUpdatesRepository stackOverflowUpdatesRepository;
 
     @Override
@@ -173,11 +171,6 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public void setGitHubLastUpdate(Long id, GitHubRepositoryInfoResponse response) {
-//        String query = "UPDATE link_info.link " +
-//                "SET last_check = ?, last_update=? " +
-//                "WHERE id = ?";
-//        jdbcTemplate.update(query, OffsetDateTime.now(), update, id);
-
         Link foundLink = linkRepository.findById(id)
                                        .orElseThrow(() ->
                                                new DataNotFoundException("Ссылка с id=" + id + " не найдена"));
@@ -191,11 +184,6 @@ public class JpaLinkService implements LinkService {
                                                        "Обновления для ссылки с id=" + id + " не найдены"));
         gitHubUpdates.setForksCount(response.getForksCount());
         gitHubUpdates.setWatchers(response.getWatchers());
-
-//        String query = "UPDATE link_info.github_updates " +
-//                "SET forks_count = ?, watchers=? " +
-//                "WHERE id = ?";
-//        jdbcTemplate.update(query, response.getForksCount(), response.getWatchers(), id);
     }
 
     private void addUpdatesByLinkType(AddLinkRequest request, Long linkId) {

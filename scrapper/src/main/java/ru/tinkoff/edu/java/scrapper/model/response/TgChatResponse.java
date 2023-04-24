@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode
 public class TgChatResponse {
     private Long tgChatId;
 }

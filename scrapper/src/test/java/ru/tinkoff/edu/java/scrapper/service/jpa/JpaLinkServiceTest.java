@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.service.jdbc;
+package ru.tinkoff.edu.java.scrapper.service.jpa;
 
 import liquibase.Contexts;
 import liquibase.LabelExpression;
@@ -37,10 +37,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class JdbcLinksServiceTest extends IntegrationEnvironment {
+class JpaLinkServiceTest extends IntegrationEnvironment {
     @Autowired
     private LinkService linkService;
     @Value("${spring.datasource.url}")
@@ -52,7 +52,7 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jdbc");
+        registry.add("app.database-access-type", () -> "jpa");
     }
 
     @BeforeEach
@@ -82,12 +82,11 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.addLink(1000L, request))
                         .isInstanceOf(BadRequestException.class)
-                        .hasMessageContaining("Чат с id=1000 не существует")
+                        .hasMessageContaining("Чат с id=1000 не найден")
         );
     }
 
     @Test
-    @Transactional
     @Rollback
     void addLink_shouldThrowDataAlreadyExistException() {
         AddLinkRequest addLinkRequest = AddLinkRequest.builder()
@@ -131,7 +130,7 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.removeLink(1000L, request))
                         .isInstanceOf(BadRequestException.class)
-                        .hasMessageContaining("Чат с id=1000 не существует")
+                        .hasMessageContaining("Чат с id=1000 не найден")
         );
     }
 
@@ -150,14 +149,10 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
     @Rollback
     void removeLink_shouldReturnExpectedResponse() {
         String expectedUrl = "some.url";
-        linkService.addLink(99999L, AddLinkRequest.builder()
-                                                  .link(URI.create(expectedUrl))
-                                                  .type("github")
-                                                  .build());
+        linkService.addLink(99999L, new AddLinkRequest(URI.create(expectedUrl), "github"));
         LinkResponse response = linkService.removeLink(99999L, RemoveLinkRequest.builder()
                                                                                 .link(URI.create(expectedUrl))
                                                                                 .build());
@@ -179,7 +174,7 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.findAllLinksByTgChatId(1000L))
                         .isInstanceOf(BadRequestException.class)
-                        .hasMessageContaining("Чат с id=1000 не существует")
+                        .hasMessageContaining("Чат с id=1000 не найден")
         );
     }
 
