@@ -13,6 +13,7 @@ import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
 import java.net.URI;
 import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -31,7 +32,9 @@ public class JdbcLinkRepository implements LinkRepository {
                 "SELECT ?,?,? " +
                 "WHERE NOT EXISTS(" +
                 "SELECT url FROM link_info.link WHERE chat_id=? AND url=?)";
-
+        String type = request.getLink()
+                             .getHost()
+                             .split("\\.")[0];
         String url = request.getLink()
                             .toString();
 
@@ -39,7 +42,7 @@ public class JdbcLinkRepository implements LinkRepository {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(query, new String[]{"id"});
             ps.setString(1, url);
-            ps.setString(2, request.getType());
+            ps.setString(2, type);
             ps.setLong(3, tgChatId);
             ps.setLong(4, tgChatId);
             ps.setString(5, url);
@@ -116,19 +119,19 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public void setLastCheck(Long id) {
+    public int updateLastCheck(Long id) {
         String query = "UPDATE link_info.link " +
                 "SET last_check = ? " +
                 "WHERE id = ?";
-        jdbcTemplate.update(query, OffsetDateTime.now(), id);
+        return jdbcTemplate.update(query, OffsetDateTime.now(), id);
     }
 
     @Override
-    public void setLastUpdateDate(Long id, OffsetDateTime update) {
+    public int updateLastUpdateDate(Long id, OffsetDateTime update) {
         String query = "UPDATE link_info.link " +
                 "SET last_check = ?, last_update=? " +
                 "WHERE id = ?";
-        jdbcTemplate.update(query, OffsetDateTime.now(), update, id);
+        return jdbcTemplate.update(query, OffsetDateTime.now(), update, id);
     }
 
     @Override

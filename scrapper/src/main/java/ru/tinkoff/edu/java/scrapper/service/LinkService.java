@@ -2,6 +2,8 @@ package ru.tinkoff.edu.java.scrapper.service;
 
 import ru.tinkoff.edu.java.scrapper.model.dto.LinkResponseDto;
 import ru.tinkoff.edu.java.scrapper.model.dto.UpdatesDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.updates.GitHubUpdatesDto;
+import ru.tinkoff.edu.java.scrapper.model.dto.updates.StackOverflowUpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.GitHubRepositoryInfoResponse;
@@ -20,11 +22,12 @@ public interface LinkService {
 
     List<LinkResponseDto> findAllOldestLinksByLastCheck();
 
-    UpdatesDto findUpdatesByLinkIdAndLinkType(Long linkId, String type);
+    GitHubUpdatesDto findGitHubUpdatesByLinkId(Long linkId);
+    StackOverflowUpdatesDto findStackOverflowUpdatesByLinkId(Long linkId);
 
     void setLastCheck(Long id);
 
     void setStackOverflowLastUpdate(Long id, StackOverflowQuestionInfoResponse response);
 
-    void setGitHubLastUpdate(Long id, GitHubRepositoryInfoResponse update);
+    void updateGitHubLastUpdateDate(Long id, GitHubRepositoryInfoResponse update);
 }

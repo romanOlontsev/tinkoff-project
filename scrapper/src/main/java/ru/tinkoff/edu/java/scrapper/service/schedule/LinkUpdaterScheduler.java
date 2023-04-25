@@ -57,10 +57,9 @@ public class LinkUpdaterScheduler {
                             .block();
                     if (response != null && response.getUpdatedAt()
                                                     .isAfter(it.getLastUpdate())) {
-                        GitHubUpdatesDto updates = (GitHubUpdatesDto) linkService
-                                .findUpdatesByLinkIdAndLinkType(it.getId(), it.getType());
+                        GitHubUpdatesDto updates = linkService.findGitHubUpdatesByLinkId(it.getId());
                         Map<String, String> gitHubChanges = getGitHubChanges(updates, response);
-                        linkService.setGitHubLastUpdate(it.getId(), response);
+                        linkService.updateGitHubLastUpdateDate(it.getId(), response);
                         ResponseEntity<Void> messageForBot = sendRequestToBot(it, gitHubChanges);
 
                         log.info("Get update for: id=" + it.getId() + " --- " + it.getUrl() + " --- " + gitHubChanges +
@@ -75,7 +74,7 @@ public class LinkUpdaterScheduler {
         allOldestLinksByLastUpdate
                 .stream()
                 .filter(it -> it.getType()
-                                .equals("stack"))
+                                .equals("stackoverflow"))
                 .forEach(it -> {
                     ParseResult parseResult = parser.checkLink(it.getUrl()
                                                                  .toString());
@@ -90,8 +89,7 @@ public class LinkUpdaterScheduler {
                                         .findFirst()
                                         .orElse(it.getLastUpdate());
                         if (responseLastUpdate.isAfter(it.getLastUpdate())) {
-                            StackOverflowUpdatesDto updates = (StackOverflowUpdatesDto) linkService
-                                    .findUpdatesByLinkIdAndLinkType(it.getId(), it.getType());
+                            StackOverflowUpdatesDto updates = linkService.findStackOverflowUpdatesByLinkId(it.getId());
                             Map<String, String> stackChanges = getStackOverflowChanges(updates, response);
                             linkService.setStackOverflowLastUpdate(it.getId(), response);
                             ResponseEntity<Void> messageForBot = sendRequestToBot(it, stackChanges);
