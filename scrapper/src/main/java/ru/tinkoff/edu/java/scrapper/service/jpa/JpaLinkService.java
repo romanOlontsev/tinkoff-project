@@ -11,7 +11,6 @@ import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
 import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.mapper.LinkMapper;
 import ru.tinkoff.edu.java.scrapper.model.dto.LinkResponseDto;
-import ru.tinkoff.edu.java.scrapper.model.dto.UpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.dto.updates.GitHubUpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.dto.updates.StackOverflowUpdatesDto;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
@@ -53,13 +52,17 @@ public class JpaLinkService implements LinkService {
                                                  .toString() + " уже существует у пользователя с id=" +
                                      tgChatId);
                  });
+        String host = request.getLink()
+                             .getHost()
+                             .split("\\.")[0];
+
         Link savedLink = linkRepository.save(Link.builder()
                                                  .url(request.getLink()
                                                              .toString())
-                                                 .type(request.getType())
+                                                 .type(host)
                                                  .chat(foundChat)
                                                  .build());
-        addUpdatesByLinkType(request, savedLink.getId());
+        addUpdatesByLinkType(host, savedLink.getId());
         return linkMapper.linkToLinkResponse(savedLink);
     }
 
@@ -96,33 +99,31 @@ public class JpaLinkService implements LinkService {
     }
 
     @Override
-    public UpdatesDto findUpdatesByLinkIdAndLinkType(Long linkId, String type) {
-        switch (type) {
-            case "github" -> {
-                GitHubUpdates gitHubUpdates =
-                        gitHubUpdatesRepository.findById(linkId)
-                                               .orElseThrow(() -> new DataNotFoundException(
-                                                       "Обновлений для ссылки с id=" + linkId + " не найдены"));
-                return GitHubUpdatesDto.builder()
-                                       .id(gitHubUpdates.getId())
-                                       .forksCount(gitHubUpdates.getForksCount())
-                                       .watchers(gitHubUpdates.getWatchers())
-                                       .build();
-            }
-            case "stack" -> {
-                StackOverflowUpdates stackOverflowUpdates =
-                        stackOverflowUpdatesRepository.findById(linkId)
-                                                      .orElseThrow(() -> new DataNotFoundException(
-                                                              "Обновлений для ссылки с id=" + linkId + " не найдены"));
+    public GitHubUpdatesDto findGitHubUpdatesByLinkId(Long linkId) {
+        GitHubUpdates gitHubUpdates =
+                gitHubUpdatesRepository.findById(linkId)
+                                       .orElseThrow(() -> new DataNotFoundException(
+                                               "Обновлений для ссылки с id=" + linkId + " не найдены"));
+        return GitHubUpdatesDto.builder()
+                               .id(gitHubUpdates.getId())
+                               .forksCount(gitHubUpdates.getForksCount())
+                               .watchers(gitHubUpdates.getWatchers())
+                               .build();
 
-                return StackOverflowUpdatesDto.builder()
-                                              .id(stackOverflowUpdates.getId())
-                                              .answerCount(stackOverflowUpdates.getAnswerCount())
-                                              .isAnswered(stackOverflowUpdates.isAnswered())
-                                              .build();
-            }
-            default -> throw new DataNotFoundException("Updates for link with id=" + linkId + " not found");
-        }
+    }
+
+    @Override
+    public StackOverflowUpdatesDto findStackOverflowUpdatesByLinkId(Long linkId) {
+        StackOverflowUpdates stackOverflowUpdates =
+                stackOverflowUpdatesRepository.findById(linkId)
+                                              .orElseThrow(() -> new DataNotFoundException(
+                                                      "Обновлений для ссылки с id=" + linkId + " не найдены"));
+
+        return StackOverflowUpdatesDto.builder()
+                                      .id(stackOverflowUpdates.getId())
+                                      .answerCount(stackOverflowUpdates.getAnswerCount())
+                                      .isAnswered(stackOverflowUpdates.isAnswered())
+                                      .build();
     }
 
     @Override
@@ -170,7 +171,7 @@ public class JpaLinkService implements LinkService {
 
     @Override
     @Transactional
-    public void setGitHubLastUpdate(Long id, GitHubRepositoryInfoResponse response) {
+    public void updateGitHubLastUpdateDate(Long id, GitHubRepositoryInfoResponse response) {
         Link foundLink = linkRepository.findById(id)
                                        .orElseThrow(() ->
                                                new DataNotFoundException("Ссылка с id=" + id + " не найдена"));
@@ -186,12 +187,12 @@ public class JpaLinkService implements LinkService {
         gitHubUpdates.setWatchers(response.getWatchers());
     }
 
-    private void addUpdatesByLinkType(AddLinkRequest request, Long linkId) {
-        switch (request.getType()) {
+    private void addUpdatesByLinkType(String host, Long linkId) {
+        switch (host) {
             case "github" -> gitHubUpdatesRepository.save(GitHubUpdates.builder()
                                                                        .id(linkId)
                                                                        .build());
-            case "stack" -> stackOverflowUpdatesRepository.save(StackOverflowUpdates.builder()
+            case "stackoverflow" -> stackOverflowUpdatesRepository.save(StackOverflowUpdates.builder()
                                                                                     .id(linkId)
                                                                                     .build());
             default -> throw new DataNotFoundException("Updates for link with id=" + linkId + " not found");

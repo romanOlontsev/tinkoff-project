@@ -31,8 +31,10 @@ public class JooqLinkService {
         if (!isExists) {
             throw new BadRequestException("Чат с id=" + tgChatId + " не существует");
         }
+        String host = request.getLink()
+                             .getHost();
         Record1<Long> returningResult = context.insertInto(LINK, LINK.TYPE, LINK.URL, LINK.CHAT_ID)
-                                               .values(request.getType(), request.getLink()
+                                               .values(host, request.getLink()
                                                                                  .toString(), tgChatId)
                                                .returningResult(LINK.ID)
                                                .fetchOne();

@@ -18,9 +18,9 @@ public interface LinkRepository {
 
     List<LinkResponseDto> findOneOldestLinkByLastCheckForEachUser();
 
-    void setLastCheck(Long id);
+    int updateLastCheck(Long id);
 
-    void setLastUpdateDate(Long id, OffsetDateTime update);
+    int updateLastUpdateDate(Long id, OffsetDateTime update);
 
     Boolean chatIsExists(Long tgChatId);
 }

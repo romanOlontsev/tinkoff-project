@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset admin:21
+--changeset admin:26
 CREATE SCHEMA IF NOT EXISTS link_info;
 CREATE TABLE IF NOT EXISTS link_info.chat
 (
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS link_info.link
 (
     id              bigint       NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
     url             varchar(512) NOT NULL,
-    type            varchar(10)  NOT NULL CHECK (type='stack' OR type='github'),
+    type            varchar(24)  NOT NULL CHECK (type='stackoverflow' OR type='github'),
     last_update     timestamp    NOT NULL DEFAULT '1970-01-01 00:00:00',
     last_check      timestamp    NOT NULL DEFAULT '1970-01-01 00:00:00',
     chat_id         bigint       NOT NULL REFERENCES link_info.chat ON DELETE CASCADE

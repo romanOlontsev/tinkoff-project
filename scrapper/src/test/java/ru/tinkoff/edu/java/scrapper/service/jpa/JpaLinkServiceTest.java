@@ -76,8 +76,7 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     @Rollback
     void addLink_shouldThrowBadRequestException() {
         AddLinkRequest request = AddLinkRequest.builder()
-                                               .link(URI.create("some.url"))
-                                               .type("github")
+                                               .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
                                                .build();
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.addLink(1000L, request))
@@ -89,15 +88,16 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     @Test
     @Rollback
     void addLink_shouldThrowDataAlreadyExistException() {
-        AddLinkRequest addLinkRequest = AddLinkRequest.builder()
-                                                      .link(URI.create("Gaga.url"))
-                                                      .type("github")
-                                                      .build();
+        AddLinkRequest addLinkRequest =
+                AddLinkRequest.builder()
+                              .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
+                              .build();
         linkService.addLink(99999L, addLinkRequest);
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.addLink(99999L, addLinkRequest))
                         .isInstanceOf(DataAlreadyExistException.class)
-                        .hasMessageContaining("Ссылка: Gaga.url уже существует у пользователя с id=99999")
+                        .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/pull/5 " +
+                                "уже существует у пользователя с id=99999")
         );
     }
 
@@ -105,10 +105,9 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void addLink_shouldReturnExpectedResponse() {
-        String expectedUrl = "url";
+        String expectedUrl = "https://github.com/Gadetych/tinkoff-project/pull/5";
         LinkResponse response = linkService.addLink(333L, AddLinkRequest.builder()
                                                                         .link(URI.create(expectedUrl))
-                                                                        .type("github")
                                                                         .build());
         LinkResponse expectedResponse = LinkResponse.builder()
                                                     .id(5L)
@@ -125,7 +124,7 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     @Rollback
     void removeLink_shouldThrowBadRequestException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
-                                                     .link(URI.create("some.url"))
+                                                     .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
                                                      .build();
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.removeLink(1000L, request))
@@ -139,20 +138,21 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     @Rollback
     void removeLink_shouldThrowDataNotFoundException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
-                                                     .link(URI.create("some.url"))
+                                                     .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
                                                      .build();
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.removeLink(99999L, request))
                         .isInstanceOf(DataNotFoundException.class)
-                        .hasMessageContaining("Ссылка: some.url не существует у пользователя с id=99999")
+                        .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/pull/5" +
+                                " не существует у пользователя с id=99999")
         );
     }
 
     @Test
     @Rollback
     void removeLink_shouldReturnExpectedResponse() {
-        String expectedUrl = "some.url";
-        linkService.addLink(99999L, new AddLinkRequest(URI.create(expectedUrl), "github"));
+        String expectedUrl = "https://github.com/Gadetych/tinkoff-project/pull/5";
+        linkService.addLink(99999L, new AddLinkRequest(URI.create(expectedUrl)));
         LinkResponse response = linkService.removeLink(99999L, RemoveLinkRequest.builder()
                                                                                 .link(URI.create(expectedUrl))
                                                                                 .build());
@@ -183,14 +183,14 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     @Rollback
     void findAllLinksByTgChatId_shouldReturnExpectedResponse() {
         System.out.println(linkService.findAllLinksByTgChatId(99999L));
-        LinkResponse firstExpResponse = linkService.addLink(99999L, AddLinkRequest.builder()
-                                                                                  .link(URI.create("first.url"))
-                                                                                  .type("github")
-                                                                                  .build());
-        LinkResponse secondExpResponse = linkService.addLink(99999L, AddLinkRequest.builder()
-                                                                                   .link(URI.create("second.url"))
-                                                                                   .type("github")
-                                                                                   .build());
+        LinkResponse firstExpResponse = linkService
+                .addLink(99999L, AddLinkRequest.builder()
+                                               .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
+                                               .build());
+        LinkResponse secondExpResponse = linkService
+                .addLink(99999L, AddLinkRequest.builder()
+                                               .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/6"))
+                                               .build());
         List<LinkResponse> expResponseList = List.of(firstExpResponse, secondExpResponse);
         ListLinksResponse expectedResponse = new ListLinksResponse();
         expectedResponse.setLinks(expResponseList);

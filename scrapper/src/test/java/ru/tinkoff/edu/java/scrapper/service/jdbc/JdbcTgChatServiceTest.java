@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.container.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
@@ -44,6 +46,11 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
     private String password;
     private TgChatService tgChatService;
     private JdbcTemplate jdbcTemplate;
+
+    @DynamicPropertySource
+    static void datasourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jdbc");
+    }
 
     @BeforeEach
     void setUp() {
