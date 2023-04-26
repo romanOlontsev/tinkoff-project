@@ -18,6 +18,7 @@ public class RabbitMQConfig {
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory("localhost");
+        cachingConnectionFactory.setPort(5672);
         cachingConnectionFactory.setUsername("guest");
         cachingConnectionFactory.setPassword("guest");
 //        cachingConnectionFactory.setVirtualHost("cpp");
@@ -25,8 +26,10 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate() {
-        return new RabbitTemplate(connectionFactory());
+    public RabbitTemplate rabbitTemplate(MessageConverter messageConverter) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
+        rabbitTemplate.setMessageConverter(messageConverter);
+        return rabbitTemplate;
     }
 
     @Bean

@@ -5,8 +5,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import ru.tinkoff.edu.java.parser.result.StackOverflowResultRecord;
 import ru.tinkoff.edu.java.scrapper.model.response.StackOverflowQuestionInfoResponse;
+
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +26,7 @@ public class StackOverflowClient {
                                 .queryParam("site", "stackoverflow")
                                 .build(questionId.getResult()))
                         .retrieve()
-                        .bodyToMono(StackOverflowQuestionInfoResponse.class);
-
+                        .bodyToMono(StackOverflowQuestionInfoResponse.class)
+                        .retryWhen(Retry.fixedDelay(3, Duration.ofMillis(100)));
     }
 }
