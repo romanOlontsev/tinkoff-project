@@ -37,6 +37,6 @@ jobs:
 
       - name: Build the scrapper Docker image
         run: |
-          docker build -t scrapper-image bot\. --tag ghcr.io/${{ github.actor }}/scrapper:latest
-          docker run ghcr.io/${{ github.actor }}/scrapper:latest
-          docker push ghcr.io/${{ github.actor }}/scrapper:latest
+          docker build -t scrapper-image bot\. --tag ghcr.io/tinkoff-project/scrapper:latest
+          docker run ghcr.io/tinkoff-project/scrapper:latest
+          docker push ghcr.io/tinkoff-project/scrapper:latest
