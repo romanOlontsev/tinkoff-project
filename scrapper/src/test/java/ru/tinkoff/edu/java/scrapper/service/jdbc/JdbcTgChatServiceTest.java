@@ -37,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@Transactional
 class JdbcTgChatServiceTest extends IntegrationEnvironment {
     @Value("${spring.datasource.url}")
     private String url;
@@ -74,8 +75,6 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void registerChat_shouldThrowDataAlreadyExistException() {
         assertAll(
                 () -> assertThatThrownBy(() -> tgChatService.registerChat(6633L))
@@ -84,8 +83,6 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void registerChat_shouldAddToDb() {
         Long addedTgChatId = 123L;
 
@@ -104,8 +101,6 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeChat_shouldThrowDataNotFoundException() {
         assertAll(
                 () -> assertThatThrownBy(() -> tgChatService.removeChat(1000L))
@@ -114,8 +109,6 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeChat_shouldReturnExpectedResponse() {
         Long removedChatId = 333L;
 

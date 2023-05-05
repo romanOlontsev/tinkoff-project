@@ -40,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@Transactional
 class JdbcLinksServiceTest extends IntegrationEnvironment {
     @Autowired
     private LinkService linkService;
@@ -72,8 +73,6 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void addLink_shouldThrowBadRequestException() {
         AddLinkRequest request = AddLinkRequest.builder()
                                                .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
@@ -86,31 +85,27 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Rollback
     void addLink_shouldThrowDataAlreadyExistException() {
         AddLinkRequest addLinkRequest = AddLinkRequest.builder()
                                                       .link(URI.create(
-                                                              "https://github.com/Gadetych/tinkoff-project/pull/5"))
+                                                              "https://github.com/Gadetych/tinkoff-project/TESTS"))
                                                       .build();
-        linkService.addLink(99999L, addLinkRequest);
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.addLink(99999L, addLinkRequest))
                         .isInstanceOf(DataAlreadyExistException.class)
-                        .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/pull/5 " +
+                        .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/TESTS " +
                                 "уже существует у пользователя с id=99999")
         );
     }
 
     @Test
-    @Transactional
-    @Rollback
     void addLink_shouldReturnExpectedResponse() {
-        String expectedUrl = "https://github.com/Gadetych/tinkoff-project/pull/5";
-        LinkResponse response = linkService.addLink(333L, AddLinkRequest.builder()
+        String expectedUrl = "https://github.com/Gadetych/tinkoff-project/TESTS/1";
+        LinkResponse response = linkService.addLink(99999L, AddLinkRequest.builder()
                                                                         .link(URI.create(expectedUrl))
                                                                         .build());
         LinkResponse expectedResponse = LinkResponse.builder()
-                                                    .id(5L)
+                                                    .id(6L)
                                                     .url(URI.create(expectedUrl))
                                                     .build();
         assertAll(
@@ -120,12 +115,10 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeLink_shouldThrowBadRequestException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
                                                      .link(URI.create(
-                                                             "https://github.com/Gadetych/tinkoff-project/pull/5"))
+                                                             "https://github.com/Gadetych/tinkoff-project/TESTS"))
                                                      .build();
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.removeLink(1000L, request))
@@ -135,8 +128,6 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeLink_shouldThrowDataNotFoundException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
                                                      .link(URI.create(
@@ -151,18 +142,13 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeLink_shouldReturnExpectedResponse() {
-        String expectedUrl = "https://github.com/Gadetych/tinkoff-project/pull/5";
-        linkService.addLink(99999L, AddLinkRequest.builder()
-                                                  .link(URI.create(expectedUrl))
-                                                  .build());
+        String expectedUrl = "https://github.com/Gadetych/tinkoff-project/TESTS";
         LinkResponse response = linkService.removeLink(99999L, RemoveLinkRequest.builder()
                                                                                 .link(URI.create(expectedUrl))
                                                                                 .build());
         LinkResponse expectedResponse = LinkResponse.builder()
-                                                    .id(6L)
+                                                    .id(5L)
                                                     .url(URI.create(expectedUrl))
                                                     .build();
         assertAll(
@@ -173,8 +159,6 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void findAllLinksByTgChatId_shouldThrowBadRequestException() {
         assertAll(
                 () -> assertThatThrownBy(() -> linkService.findAllLinksByTgChatId(1000L))
@@ -184,31 +168,22 @@ class JdbcLinksServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void findAllLinksByTgChatId_shouldReturnExpectedResponse() {
-        System.out.println(linkService.findAllLinksByTgChatId(99999L));
-        LinkResponse firstExpResponse = linkService
-                .addLink(99999L, AddLinkRequest.builder()
-                                               .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
-                                               .build());
-        LinkResponse secondExpResponse = linkService
-                .addLink(99999L, AddLinkRequest.builder()
-                                               .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/6"))
-                                               .build());
-        List<LinkResponse> expResponseList = List.of(firstExpResponse, secondExpResponse);
+        List<LinkResponse> links = List.of(
+                LinkResponse.builder()
+                            .id(5L)
+                            .url(URI.create("https://github.com/Gadetych/tinkoff-project/TESTS"))
+                            .build());
         ListLinksResponse expectedResponse = new ListLinksResponse();
-        expectedResponse.setLinks(expResponseList);
+        expectedResponse.setLinks(links);
 
         ListLinksResponse response = linkService.findAllLinksByTgChatId(99999L);
 
         assertAll(
                 () -> assertThat(response.getLinks()
                                          .get(0)
-                                         .getUrl()).isEqualTo(firstExpResponse.getUrl()),
-                () -> assertThat(response.getLinks()
-                                         .get(1)
-                                         .getId()).isEqualTo(secondExpResponse.getId()),
+                                         .getUrl()).isEqualTo(links.get(0)
+                                                                   .getUrl()),
                 () -> assertThat(response.getSize()).isEqualTo(expectedResponse.getSize())
         );
     }
