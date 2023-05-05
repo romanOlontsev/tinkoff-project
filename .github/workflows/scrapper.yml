@@ -20,12 +20,13 @@ jobs:
 
       - name: Java setup
         uses: actions/setup-java@v3
-          with:
-            distribution: 'temurin'
-            java-version: '17'
-            cache: 'maven'
-              - name: Build with Maven
-                run: mvn package -pl scraper -am
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+      
+      - name: Build with Maven
+        run: mvn package -pl scraper -am
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
