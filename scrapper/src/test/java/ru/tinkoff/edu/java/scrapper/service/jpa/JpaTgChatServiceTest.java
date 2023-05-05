@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@Transactional
 class JpaTgChatServiceTest extends IntegrationEnvironment {
     @Autowired
     private TgChatService tgChatService;
@@ -66,8 +67,6 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void registerChat_shouldThrowDataAlreadyExistException() {
         assertAll(
                 () -> assertThatThrownBy(() -> tgChatService.registerChat(99999L))
@@ -76,8 +75,6 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void registerChat_shouldReturnExpectedResponse() {
         Long chatId = 123321L;
         TgChatResponse expectedResponse = TgChatResponse.builder()
@@ -95,8 +92,6 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeChat_shouldThrowDataNotFoundException() {
         assertAll(
                 () -> assertThatThrownBy(() -> tgChatService.removeChat(123321L))
@@ -105,8 +100,6 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeChat_shouldReturnExpectedResponse() {
         Long chatId = 99999L;
         TgChatResponse expectedResponse = TgChatResponse.builder()
