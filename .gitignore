@@ -110,3 +110,4 @@ fabric.properties
 *.iml
 out
 gen
+rabbitmq/
