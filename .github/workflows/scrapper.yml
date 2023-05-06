@@ -10,6 +10,8 @@ on:
     paths:
       - 'scrapper/**'
 
+permissions:
+  packages: write
 
 jobs:
   build:
@@ -37,5 +39,5 @@ jobs:
 
       - name: Build and push the scrapper Docker image
         run: |
-          docker build -t ghcr.io/tinkoff-project/scrapper:latest scrapper/.
-          docker push ghcr.io/tinkoff-project/scrapper:latest
+          docker build -t ghcr.io/${{ github.repository }}/scrapper:latest scrapper/.
+          docker push ghcr.io/${{ github.repository }}/scrapper:latest
