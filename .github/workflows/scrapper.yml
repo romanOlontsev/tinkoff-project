@@ -35,14 +35,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-        with:
-          version: v0.7
-
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          file: ./scrapper/Dockerfile
-          push: true
-          tags: tinkoff-project/scrapper:latest
+      - name: Build and push the scrapper Docker image
+        run: |
+          docker build -t tinkoff-project/scrapper:latest scrapper/.
+          docker push tinkoff-project/scrapper:latest
