@@ -16,25 +16,26 @@ public class JdbcGitHubUpdatesRepository {
     public GitHubUpdatesDto findGitHubUpdatesByLinkId(Long linkId) {
         String query = "SELECT * FROM link_info.github_updates WHERE id=?";
         return jdbcTemplate.queryForObject(
-                query,
-                (rs, rowNum) -> GitHubUpdatesDto.builder()
-                                                .id(rs.getLong("id"))
-                                                .forksCount(rs.getInt("forks_count"))
-                                                .watchers(rs.getInt("watchers"))
-                                                .build(),
-                linkId);
+            query,
+            (rs, rowNum) -> GitHubUpdatesDto.builder()
+                                            .id(rs.getLong("id"))
+                                            .forksCount(rs.getInt("forks_count"))
+                                            .watchers(rs.getInt("watchers"))
+                                            .build(),
+            linkId
+        );
     }
 
     public int updateGitHubInfo(Long id, GitHubRepositoryInfoResponse response) {
-        String query = "UPDATE link_info.github_updates " +
-                "SET forks_count = ?, watchers=? " +
-                "WHERE id = ?";
+        String query = "UPDATE link_info.github_updates "
+            + "SET forks_count = ?, watchers=? "
+            + "WHERE id = ?";
         return jdbcTemplate.update(query, response.getForksCount(), response.getWatchers(), id);
     }
 
     public void addGitHubUpdatesByLink(Long linkId) {
-        String query = "INSERT INTO link_info.github_updates(id) " +
-                "VALUES (?)";
+        String query = "INSERT INTO link_info.github_updates(id) "
+            + "VALUES (?)";
         jdbcTemplate.update(query, linkId);
     }
 }

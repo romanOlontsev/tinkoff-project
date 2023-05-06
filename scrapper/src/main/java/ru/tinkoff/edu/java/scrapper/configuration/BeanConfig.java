@@ -1,5 +1,8 @@
 package ru.tinkoff.edu.java.scrapper.configuration;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.conf.RenderQuotedNames;
@@ -13,10 +16,6 @@ import ru.tinkoff.edu.java.parser.Parser;
 import ru.tinkoff.edu.java.parser.links.GitHubLinkParse;
 import ru.tinkoff.edu.java.parser.links.LinkParse;
 import ru.tinkoff.edu.java.parser.links.StackOverflowLinkParse;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 @Configuration
 @EnableScheduling
@@ -40,8 +39,10 @@ public class BeanConfig {
     @Bean
     public Parser linkParser() {
         Parser parser = new Parser();
-        parser.setLinks(LinkParse.link(new GitHubLinkParse(),
-                new StackOverflowLinkParse()));
+        parser.setLinks(LinkParse.link(
+            new GitHubLinkParse(),
+            new StackOverflowLinkParse()
+        ));
         return parser;
     }
 

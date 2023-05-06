@@ -41,3 +41,11 @@ jobs:
         run: |
           docker build -t ghcr.io/romanolontsev/tinkoff-project/bot:latest --build-arg NAME=${{ secrets.BOT_NAME }} --build-arg TOKEN=${{ secrets.BOT_TOKEN }} bot/.
           docker push ghcr.io/romanolontsev/tinkoff-project/bot:latest
+
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Checkstyle with Maven
+        run: mvn -pl bot -am checkstyle:check

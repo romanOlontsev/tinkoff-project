@@ -18,55 +18,57 @@ import ru.tinkoff.edu.java.scrapper.model.response.ApiErrorResponse;
 public interface TgChat {
     @Operation(summary = "Зарегистрировать чат")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Чат зарегистрирован"
-                    //                    , content = @Content(
+        @ApiResponse(
+            responseCode = "200",
+            description = "Чат зарегистрирован"
+            //                    , content = @Content(
 //                            mediaType = "application/json",
 //                            schema = @Schema(implementation = LinkResponse.class))
             ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Некорректные параметры запроса",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ApiErrorResponse.class)))})
+        @ApiResponse(
+            responseCode = "400",
+            description = "Некорректные параметры запроса",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))})
     @PostMapping(value = "/tg-chat/{id}",
-            produces = {"application/json"})
+                 produces = {"application/json"})
     ResponseEntity<Void> registerChat(
-            @Parameter(
-                    in = ParameterIn.PATH,
-                    required = true,
-                    schema = @Schema())
-            @PathVariable("id") Long id);
+        @Parameter(
+            in = ParameterIn.PATH,
+            required = true,
+            schema = @Schema())
+        @PathVariable("id") Long id
+    );
 
     @Operation(summary = "Удалить чат")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Чат успешно удалён"
+        @ApiResponse(
+            responseCode = "200",
+            description = "Чат успешно удалён"
 //                    , content = @Content(
 //                            mediaType = "application/json",
 //                            schema = @Schema(implementation = LinkResponse.class))
             ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Некорректные параметры запроса",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ApiErrorResponse.class))),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Чат не существует",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ApiErrorResponse.class)))})
+        @ApiResponse(
+            responseCode = "400",
+            description = "Некорректные параметры запроса",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Чат не существует",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))})
     @DeleteMapping(value = "/tg-chat/{id}",
-            produces = {"application/json"})
+                   produces = {"application/json"})
     ResponseEntity<Void> deleteChat(
-            @Parameter(
-                    in = ParameterIn.PATH,
-                    required = true,
-                    schema = @Schema())
-            @PathVariable("id") Long id);
+        @Parameter(
+            in = ParameterIn.PATH,
+            required = true,
+            schema = @Schema())
+        @PathVariable("id") Long id
+    );
 }

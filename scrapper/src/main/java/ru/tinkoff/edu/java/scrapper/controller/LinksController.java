@@ -26,12 +26,13 @@ public class LinksController implements Links {
 
     @Override
     public ResponseEntity<ListLinksResponse> getLinks(
-            @Parameter(
-                    in = ParameterIn.HEADER,
-                    required = true, schema = @Schema())
-            @RequestHeader(
-                    value = "Tg-Chat-Id")
-            Long tgChatId) {
+        @Parameter(
+            in = ParameterIn.HEADER,
+            required = true, schema = @Schema())
+        @RequestHeader(
+            value = "Tg-Chat-Id")
+        Long tgChatId
+    ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             ListLinksResponse links = linkService.findAllLinksByTgChatId(tgChatId);
@@ -42,20 +43,21 @@ public class LinksController implements Links {
 
     @Override
     public ResponseEntity<LinkResponse> postLinks(
-            @Parameter(
-                    in = ParameterIn.HEADER,
-                    required = true,
-                    schema = @Schema())
-            @RequestHeader(
-                    value = "Tg-Chat-Id")
-            Long tgChatId,
-            @Parameter(
-                    in = ParameterIn.DEFAULT,
-                    required = true,
-                    schema = @Schema())
-            @Valid
-            @RequestBody
-            AddLinkRequest body) {
+        @Parameter(
+            in = ParameterIn.HEADER,
+            required = true,
+            schema = @Schema())
+        @RequestHeader(
+            value = "Tg-Chat-Id")
+        Long tgChatId,
+        @Parameter(
+            in = ParameterIn.DEFAULT,
+            required = true,
+            schema = @Schema())
+        @Valid
+        @RequestBody
+        AddLinkRequest body
+    ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             LinkResponse response = linkService.addLink(tgChatId, body);
@@ -66,20 +68,21 @@ public class LinksController implements Links {
 
     @Override
     public ResponseEntity<LinkResponse> deleteLinks(
-            @Parameter(
-                    in = ParameterIn.HEADER,
-                    required = true,
-                    schema = @Schema())
-            @RequestHeader(
-                    value = "Tg-Chat-Id")
-            Long tgChatId,
-            @Parameter(
-                    in = ParameterIn.DEFAULT,
-                    required = true,
-                    schema = @Schema())
-            @Valid
-            @RequestBody
-            RemoveLinkRequest body) {
+        @Parameter(
+            in = ParameterIn.HEADER,
+            required = true,
+            schema = @Schema())
+        @RequestHeader(
+            value = "Tg-Chat-Id")
+        Long tgChatId,
+        @Parameter(
+            in = ParameterIn.DEFAULT,
+            required = true,
+            schema = @Schema())
+        @Valid
+        @RequestBody
+        RemoveLinkRequest body
+    ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             LinkResponse response = linkService.removeLink(tgChatId, body);

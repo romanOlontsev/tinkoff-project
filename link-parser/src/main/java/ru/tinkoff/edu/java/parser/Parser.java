@@ -1,11 +1,10 @@
 package ru.tinkoff.edu.java.parser;
 
-import ru.tinkoff.edu.java.parser.links.LinkParse;
-import ru.tinkoff.edu.java.parser.result.ParseResult;
-
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import ru.tinkoff.edu.java.parser.links.LinkParse;
+import ru.tinkoff.edu.java.parser.result.ParseResult;
 
 public class Parser {
     private LinkParse linkParse;

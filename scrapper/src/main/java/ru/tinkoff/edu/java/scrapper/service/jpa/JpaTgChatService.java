@@ -1,5 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.service.jpa;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.domain.entity.Chat;
@@ -10,8 +11,6 @@ import ru.tinkoff.edu.java.scrapper.model.response.ListTgChatResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.TgChatResponse;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaTgChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.TgChatService;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 public class JpaTgChatService implements TgChatService {

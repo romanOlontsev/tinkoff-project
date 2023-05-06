@@ -19,21 +19,27 @@ import ru.tinkoff.edu.java.scrapper.service.jpa.JpaTgChatService;
 public class JpaAccessConfig {
 
     @Bean
-    public LinkService linkService(JpaLinkRepository jpaLinkRepository,
-                                   JpaTgChatRepository jpaTgChatRepository,
-                                   LinkMapper linkMapper,
-                                   JpaGitHubUpdatesRepository gitHubUpdatesRepository,
-                                   JpaStackOverflowUpdatesRepository stackOverflowUpdatesRepository) {
-        return new JpaLinkService(jpaLinkRepository,
-                jpaTgChatRepository,
-                linkMapper,
-                gitHubUpdatesRepository,
-                stackOverflowUpdatesRepository);
+    public LinkService linkService(
+        JpaLinkRepository jpaLinkRepository,
+        JpaTgChatRepository jpaTgChatRepository,
+        LinkMapper linkMapper,
+        JpaGitHubUpdatesRepository gitHubUpdatesRepository,
+        JpaStackOverflowUpdatesRepository stackOverflowUpdatesRepository
+    ) {
+        return new JpaLinkService(
+            jpaLinkRepository,
+            jpaTgChatRepository,
+            linkMapper,
+            gitHubUpdatesRepository,
+            stackOverflowUpdatesRepository
+        );
     }
 
     @Bean
-    public TgChatService tgChatService(JpaTgChatRepository chatRepository,
-                                       ChatMapper chatMapper) {
+    public TgChatService tgChatService(
+        JpaTgChatRepository chatRepository,
+        ChatMapper chatMapper
+    ) {
         return new JpaTgChatService(chatRepository, chatMapper);
     }
 }

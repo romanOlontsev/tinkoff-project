@@ -1,5 +1,9 @@
 package ru.tinkoff.edu.java.scrapper.service.schedule;
 
+import java.time.OffsetDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,11 +22,6 @@ import ru.tinkoff.edu.java.scrapper.service.LinkService;
 import ru.tinkoff.edu.java.scrapper.service.SendMessageService;
 import ru.tinkoff.edu.java.scrapper.service.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.service.client.StackOverflowClient;
-
-import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -44,58 +43,58 @@ public class LinkUpdaterScheduler {
 
     private void getUpdatesForGitHubLinks(List<LinkResponseDto> allOldestLinksByLastUpdate) {
         allOldestLinksByLastUpdate
-                .stream()
-                .filter(it -> it.getType()
-                                .equals("github"))
-                .forEach(it -> {
-                    ParseResult parseResult = parser.checkLink(it.getUrl()
-                                                                 .toString());
-                    GitHubRepositoryInfoResponse response = gitHubClient
-                            .getGitHubRepositoryInfo((GitHubResultRecord) parseResult)
-                            .block();
-                    if (response != null && response.getUpdatedAt()
-                                                    .isAfter(it.getLastUpdate())) {
-                        GitHubUpdatesDto updates = linkService.findGitHubUpdatesByLinkId(it.getId());
-                        Map<String, String> gitHubChanges = getGitHubChanges(updates, response);
-                        linkService.updateGitHubLastUpdateDate(it.getId(), response);
-                        sendRequestToBot(it, gitHubChanges);
+            .stream()
+            .filter(it -> it.getType()
+                            .equals("github"))
+            .forEach(it -> {
+                ParseResult parseResult = parser.checkLink(it.getUrl()
+                                                             .toString());
+                GitHubRepositoryInfoResponse response = gitHubClient
+                    .getGitHubRepositoryInfo((GitHubResultRecord) parseResult)
+                    .block();
+                if (response != null && response.getUpdatedAt()
+                                                .isAfter(it.getLastUpdate())) {
+                    GitHubUpdatesDto updates = linkService.findGitHubUpdatesByLinkId(it.getId());
+                    Map<String, String> gitHubChanges = getGitHubChanges(updates, response);
+                    linkService.updateGitHubLastUpdateDate(it.getId(), response);
+                    sendRequestToBot(it, gitHubChanges);
 
-                        log.info("Get update for: id=" + it.getId() + " --- " + it.getUrl() + " --- " + gitHubChanges);
-                    } else {
-                        linkService.setLastCheck(it.getId());
-                    }
-                });
+                    log.info("Get update for: id=" + it.getId() + " --- " + it.getUrl() + " --- " + gitHubChanges);
+                } else {
+                    linkService.setLastCheck(it.getId());
+                }
+            });
     }
 
     private void getUpdatesForStackOverflowLinks(List<LinkResponseDto> allOldestLinksByLastUpdate) {
         allOldestLinksByLastUpdate
-                .stream()
-                .filter(it -> it.getType()
-                                .equals("stackoverflow"))
-                .forEach(it -> {
-                    ParseResult parseResult = parser.checkLink(it.getUrl()
-                                                                 .toString());
-                    StackOverflowQuestionInfoResponse response = stackOverflowClient
-                            .getStackOverflowQuestionInfo((StackOverflowResultRecord) parseResult)
-                            .block();
-                    if (response != null) {
-                        OffsetDateTime responseLastUpdate =
-                                response.getItems()
-                                        .stream()
-                                        .map(StackOverflowQuestionInfoResponse.Items::getLastActivityDate)
-                                        .findFirst()
-                                        .orElse(it.getLastUpdate());
-                        if (responseLastUpdate.isAfter(it.getLastUpdate())) {
-                            StackOverflowUpdatesDto updates = linkService.findStackOverflowUpdatesByLinkId(it.getId());
-                            Map<String, String> stackChanges = getStackOverflowChanges(updates, response);
-                            linkService.setStackOverflowLastUpdate(it.getId(), response);
-                            sendRequestToBot(it, stackChanges);
-                            log.info("Get update for: id=" + it.getId() + " --- " + it.getUrl() + " --- " + stackChanges);
-                        } else {
-                            linkService.setLastCheck(it.getId());
-                        }
+            .stream()
+            .filter(it -> it.getType()
+                            .equals("stackoverflow"))
+            .forEach(it -> {
+                ParseResult parseResult = parser.checkLink(it.getUrl()
+                                                             .toString());
+                StackOverflowQuestionInfoResponse response = stackOverflowClient
+                    .getStackOverflowQuestionInfo((StackOverflowResultRecord) parseResult)
+                    .block();
+                if (response != null) {
+                    OffsetDateTime responseLastUpdate =
+                        response.getItems()
+                                .stream()
+                                .map(StackOverflowQuestionInfoResponse.Items::getLastActivityDate)
+                                .findFirst()
+                                .orElse(it.getLastUpdate());
+                    if (responseLastUpdate.isAfter(it.getLastUpdate())) {
+                        StackOverflowUpdatesDto updates = linkService.findStackOverflowUpdatesByLinkId(it.getId());
+                        Map<String, String> stackChanges = getStackOverflowChanges(updates, response);
+                        linkService.setStackOverflowLastUpdate(it.getId(), response);
+                        sendRequestToBot(it, stackChanges);
+                        log.info("Get update for: id=" + it.getId() + " --- " + it.getUrl() + " --- " + stackChanges);
+                    } else {
+                        linkService.setLastCheck(it.getId());
                     }
-                });
+                }
+            });
     }
 
     private void sendRequestToBot(LinkResponseDto it, Map<String, String> changes) {
@@ -103,13 +102,15 @@ public class LinkUpdaterScheduler {
                                                         .tgChat(it.getId())
                                                         .description("Update available")
                                                         .url(it.getUrl()
-                                                    .toString())
+                                                               .toString())
                                                         .changes(changes)
                                                         .build());
     }
 
-    private Map<String, String> getGitHubChanges(GitHubUpdatesDto updates,
-                                                 GitHubRepositoryInfoResponse response) {
+    private Map<String, String> getGitHubChanges(
+        GitHubUpdatesDto updates,
+        GitHubRepositoryInfoResponse response
+    ) {
         Map<String, String> changes = new HashMap<>();
         if (response.getWatchers() > updates.getWatchers()) {
             changes.put("watchers", "+" + (response.getWatchers() - updates.getWatchers()));
@@ -120,8 +121,10 @@ public class LinkUpdaterScheduler {
         return changes;
     }
 
-    private Map<String, String> getStackOverflowChanges(StackOverflowUpdatesDto updates,
-                                                        StackOverflowQuestionInfoResponse response) {
+    private Map<String, String> getStackOverflowChanges(
+        StackOverflowUpdatesDto updates,
+        StackOverflowQuestionInfoResponse response
+    ) {
         Integer answerCount = response.getItems()
                                       .stream()
                                       .map(StackOverflowQuestionInfoResponse.Items::getAnswerCount)

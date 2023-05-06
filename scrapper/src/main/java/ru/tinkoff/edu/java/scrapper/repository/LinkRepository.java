@@ -1,13 +1,12 @@
 package ru.tinkoff.edu.java.scrapper.repository;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import ru.tinkoff.edu.java.scrapper.model.dto.LinkResponseDto;
 import ru.tinkoff.edu.java.scrapper.model.request.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
-
-import java.time.OffsetDateTime;
-import java.util.List;
 
 public interface LinkRepository {
     LinkResponse add(Long tgChatId, AddLinkRequest request);

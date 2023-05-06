@@ -16,7 +16,7 @@ public abstract class IntegrationEnvironment {
 
     @DynamicPropertySource
     static void datasourceProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", () -> postgres.getJdbcUrl()+"?stringtype=unspecified");
+        registry.add("spring.datasource.url", () -> postgres.getJdbcUrl() + "?stringtype=unspecified");
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.datasource.username", postgres::getUsername);
     }

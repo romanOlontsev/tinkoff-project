@@ -7,13 +7,12 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.bot.configuration.TelegramConfig;
 import ru.tinkoff.edu.java.bot.service.command.Command;
 import ru.tinkoff.edu.java.bot.service.command.CommandList;
 import ru.tinkoff.edu.java.bot.service.command.imp.UnknownCommand;
-
-import java.util.List;
 
 @Service
 public class BotStarter implements Bot {

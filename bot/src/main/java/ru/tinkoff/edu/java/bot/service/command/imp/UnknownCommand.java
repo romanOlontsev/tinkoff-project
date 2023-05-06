@@ -8,8 +8,8 @@ import ru.tinkoff.edu.java.bot.service.command.Command;
 public class UnknownCommand implements Command {
     @Getter
     private static final String UNKNOWN_COMMAND = """
-            I don't know this command =(
-            check /help""";
+        I don't know this command =(
+        check /help""";
 
     @Override
     public String command() {

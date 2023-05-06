@@ -9,7 +9,6 @@ import ru.tinkoff.edu.java.parser.links.LinkParse;
 import ru.tinkoff.edu.java.parser.links.StackOverflowLinkParse;
 import ru.tinkoff.edu.java.parser.result.GitHubResultRecord;
 import ru.tinkoff.edu.java.parser.result.StackOverflowResultRecord;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -20,22 +19,23 @@ class ParserTest {
     void setUp() {
         parser = new Parser();
         LinkParse supportedLinkParse = LinkParse.link(
-                new GitHubLinkParse(),
-                new StackOverflowLinkParse());
+            new GitHubLinkParse(),
+            new StackOverflowLinkParse()
+        );
         parser.setLinks(supportedLinkParse);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "https://github.com/Vitalik1995Rikov/",
-            "https://github.com/",
-            "https://stackoverflow.com/",
-            "https://stackoverflow.com/users",
-            "https://stackoverflow.com/questions/",
-            "https://github.com/pulls",
-            "https://www.google.com/",
-            "google.com",
-            "www.google.com/"
+        "https://github.com/Vitalik1995Rikov/",
+        "https://github.com/",
+        "https://stackoverflow.com/",
+        "https://stackoverflow.com/users",
+        "https://stackoverflow.com/questions/",
+        "https://github.com/pulls",
+        "https://www.google.com/",
+        "google.com",
+        "www.google.com/"
     })
     void checkLink_shouldReturnNull(String input) {
         assertNull(parser.checkLink(input));

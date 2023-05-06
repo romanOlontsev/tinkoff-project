@@ -1,5 +1,11 @@
 package ru.tinkoff.edu.java.scrapper.service.jdbc;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -14,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +29,6 @@ import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.response.TgChatResponse;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcTgChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.TgChatService;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -56,18 +53,19 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
     @BeforeEach
     void setUp() {
         jdbcTemplate = new JdbcTemplate(
-                new DriverManagerDataSource(url, username, password));
+            new DriverManagerDataSource(url, username, password));
         tgChatService = new JdbcTgChatService(
-                new JdbcTgChatRepository(jdbcTemplate));
+            new JdbcTgChatRepository(jdbcTemplate));
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              Database database = DatabaseFactory.getInstance()
                                                 .findCorrectDatabaseImplementation(new JdbcConnection(connection))) {
             Liquibase liquibase = new liquibase.Liquibase("master.xml",
-                    new DirectoryResourceAccessor(new File("").toPath()
-                                                              .toAbsolutePath()
-                                                              .getParent()
-                                                              .resolve("migrations")), database);
+                new DirectoryResourceAccessor(new File("").toPath()
+                                                          .toAbsolutePath()
+                                                          .getParent()
+                                                          .resolve("migrations")), database
+            );
             liquibase.update(new Contexts(), new LabelExpression());
         } catch (LiquibaseException | SQLException | FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -77,9 +75,9 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
     @Test
     void registerChat_shouldThrowDataAlreadyExistException() {
         assertAll(
-                () -> assertThatThrownBy(() -> tgChatService.registerChat(6633L))
-                        .isInstanceOf(DataAlreadyExistException.class)
-                        .hasMessageContaining("Чат с id=6633 уже существует"));
+            () -> assertThatThrownBy(() -> tgChatService.registerChat(6633L))
+                .isInstanceOf(DataAlreadyExistException.class)
+                .hasMessageContaining("Чат с id=6633 уже существует"));
     }
 
     @Test
@@ -87,25 +85,27 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
         Long addedTgChatId = 123L;
 
         TgChatResponse tgChatResponse = tgChatService.registerChat(addedTgChatId);
-        Long response = jdbcTemplate.queryForObject("SELECT * FROM link_info.chat WHERE chat_id=?",
-                Long.class,
-                addedTgChatId);
+        Long response = jdbcTemplate.queryForObject(
+            "SELECT * FROM link_info.chat WHERE chat_id=?",
+            Long.class,
+            addedTgChatId
+        );
 
         assertAll(
-                () -> assertThat(response).isNotNull()
-                                          .isEqualTo(addedTgChatId),
-                () -> assertThat(tgChatResponse).isNotNull()
-                                                .extracting("tgChatId")
-                                                .isEqualTo(addedTgChatId)
+            () -> assertThat(response).isNotNull()
+                                      .isEqualTo(addedTgChatId),
+            () -> assertThat(tgChatResponse).isNotNull()
+                                            .extracting("tgChatId")
+                                            .isEqualTo(addedTgChatId)
         );
     }
 
     @Test
     void removeChat_shouldThrowDataNotFoundException() {
         assertAll(
-                () -> assertThatThrownBy(() -> tgChatService.removeChat(1000L))
-                        .isInstanceOf(DataNotFoundException.class)
-                        .hasMessageContaining("Чат с id=1000 не найден"));
+            () -> assertThatThrownBy(() -> tgChatService.removeChat(1000L))
+                .isInstanceOf(DataNotFoundException.class)
+                .hasMessageContaining("Чат с id=1000 не найден"));
     }
 
     @Test
@@ -114,13 +114,13 @@ class JdbcTgChatServiceTest extends IntegrationEnvironment {
 
         TgChatResponse tgChatResponse = tgChatService.removeChat(removedChatId);
         List<Long> allChatIdInDb = jdbcTemplate.query("SELECT * FROM link_info.chat", (rs, rowNum) ->
-                rs.getLong("chat_id"));
+            rs.getLong("chat_id"));
 
         assertAll(
-                () -> assertThat(tgChatResponse).isNotNull()
-                                                .extracting("tgChatId")
-                                                .isEqualTo(removedChatId),
-                () -> assertThat(allChatIdInDb).doesNotContain(removedChatId)
+            () -> assertThat(tgChatResponse).isNotNull()
+                                            .extracting("tgChatId")
+                                            .isEqualTo(removedChatId),
+            () -> assertThat(allChatIdInDb).doesNotContain(removedChatId)
         );
     }
 }

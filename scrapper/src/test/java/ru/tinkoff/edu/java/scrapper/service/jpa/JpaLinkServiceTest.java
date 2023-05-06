@@ -1,5 +1,12 @@
 package ru.tinkoff.edu.java.scrapper.service.jpa;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -25,15 +32,6 @@ import ru.tinkoff.edu.java.scrapper.model.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.model.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.model.response.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URI;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -61,10 +59,11 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
              Database database = DatabaseFactory.getInstance()
                                                 .findCorrectDatabaseImplementation(new JdbcConnection(connection))) {
             Liquibase liquibase = new liquibase.Liquibase("master.xml",
-                    new DirectoryResourceAccessor(new File("").toPath()
-                                                              .toAbsolutePath()
-                                                              .getParent()
-                                                              .resolve("migrations")), database);
+                new DirectoryResourceAccessor(new File("").toPath()
+                                                          .toAbsolutePath()
+                                                          .getParent()
+                                                          .resolve("migrations")), database
+            );
             liquibase.update(new Contexts(), new LabelExpression());
         } catch (LiquibaseException | SQLException | FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -77,23 +76,23 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
                                                .link(URI.create("https://github.com/Gadetych/tinkoff-project/TESTS"))
                                                .build();
         assertAll(
-                () -> assertThatThrownBy(() -> linkService.addLink(1000L, request))
-                        .isInstanceOf(BadRequestException.class)
-                        .hasMessageContaining("Чат с id=1000 не найден")
+            () -> assertThatThrownBy(() -> linkService.addLink(1000L, request))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Чат с id=1000 не найден")
         );
     }
 
     @Test
     void addLink_shouldThrowDataAlreadyExistException() {
         AddLinkRequest addLinkRequest =
-                AddLinkRequest.builder()
-                              .link(URI.create("https://github.com/Gadetych/tinkoff-project/TESTS"))
-                              .build();
+            AddLinkRequest.builder()
+                          .link(URI.create("https://github.com/Gadetych/tinkoff-project/TESTS"))
+                          .build();
         assertAll(
-                () -> assertThatThrownBy(() -> linkService.addLink(99999L, addLinkRequest))
-                        .isInstanceOf(DataAlreadyExistException.class)
-                        .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/TESTS " +
-                                "уже существует у пользователя с id=99999")
+            () -> assertThatThrownBy(() -> linkService.addLink(99999L, addLinkRequest))
+                .isInstanceOf(DataAlreadyExistException.class)
+                .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/TESTS " +
+                    "уже существует у пользователя с id=99999")
         );
     }
 
@@ -101,40 +100,42 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     void addLink_shouldReturnExpectedResponse() {
         String expectedUrl = "https://github.com/Gadetych/tinkoff-project/TESTS/1";
         LinkResponse response = linkService.addLink(99999L, AddLinkRequest.builder()
-                                                                        .link(URI.create(expectedUrl))
-                                                                        .build());
+                                                                          .link(URI.create(expectedUrl))
+                                                                          .build());
         LinkResponse expectedResponse = LinkResponse.builder()
                                                     .id(6L)
                                                     .url(URI.create(expectedUrl))
                                                     .build();
         assertAll(
-                () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
-                () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
+            () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
+            () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
         );
     }
 
     @Test
     void removeLink_shouldThrowBadRequestException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
-                                                     .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
+                                                     .link(URI.create(
+                                                         "https://github.com/Gadetych/tinkoff-project/pull/5"))
                                                      .build();
         assertAll(
-                () -> assertThatThrownBy(() -> linkService.removeLink(1000L, request))
-                        .isInstanceOf(BadRequestException.class)
-                        .hasMessageContaining("Чат с id=1000 не найден")
+            () -> assertThatThrownBy(() -> linkService.removeLink(1000L, request))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Чат с id=1000 не найден")
         );
     }
 
     @Test
     void removeLink_shouldThrowDataNotFoundException() {
         RemoveLinkRequest request = RemoveLinkRequest.builder()
-                                                     .link(URI.create("https://github.com/Gadetych/tinkoff-project/pull/5"))
+                                                     .link(URI.create(
+                                                         "https://github.com/Gadetych/tinkoff-project/pull/5"))
                                                      .build();
         assertAll(
-                () -> assertThatThrownBy(() -> linkService.removeLink(99999L, request))
-                        .isInstanceOf(DataNotFoundException.class)
-                        .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/pull/5" +
-                                " не существует у пользователя с id=99999")
+            () -> assertThatThrownBy(() -> linkService.removeLink(99999L, request))
+                .isInstanceOf(DataNotFoundException.class)
+                .hasMessageContaining("Ссылка: https://github.com/Gadetych/tinkoff-project/pull/5" +
+                    " не существует у пользователя с id=99999")
         );
     }
 
@@ -149,8 +150,8 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
                                                     .url(URI.create(expectedUrl))
                                                     .build();
         assertAll(
-                () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
-                () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
+            () -> assertThat(response.getUrl()).isEqualTo(expectedResponse.getUrl()),
+            () -> assertThat(response.getId()).isEqualTo(expectedResponse.getId())
         );
 
     }
@@ -158,30 +159,30 @@ class JpaLinkServiceTest extends IntegrationEnvironment {
     @Test
     void findAllLinksByTgChatId_shouldThrowBadRequestException() {
         assertAll(
-                () -> assertThatThrownBy(() -> linkService.findAllLinksByTgChatId(1000L))
-                        .isInstanceOf(BadRequestException.class)
-                        .hasMessageContaining("Чат с id=1000 не найден")
+            () -> assertThatThrownBy(() -> linkService.findAllLinksByTgChatId(1000L))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("Чат с id=1000 не найден")
         );
     }
 
     @Test
     void findAllLinksByTgChatId_shouldReturnExpectedResponse() {
         List<LinkResponse> links = List.of(
-                LinkResponse.builder()
-                            .id(5L)
-                            .url(URI.create("https://github.com/Gadetych/tinkoff-project/TESTS"))
-                            .build());
+            LinkResponse.builder()
+                        .id(5L)
+                        .url(URI.create("https://github.com/Gadetych/tinkoff-project/TESTS"))
+                        .build());
         ListLinksResponse expectedResponse = new ListLinksResponse();
         expectedResponse.setLinks(links);
 
         ListLinksResponse response = linkService.findAllLinksByTgChatId(99999L);
 
         assertAll(
-                () -> assertThat(response.getLinks()
-                                         .get(0)
-                                         .getUrl()).isEqualTo(links.get(0)
-                                                                   .getUrl()),
-                () -> assertThat(response.getSize()).isEqualTo(expectedResponse.getSize())
+            () -> assertThat(response.getLinks()
+                                     .get(0)
+                                     .getUrl()).isEqualTo(links.get(0)
+                                                               .getUrl()),
+            () -> assertThat(response.getSize()).isEqualTo(expectedResponse.getSize())
         );
     }
 }

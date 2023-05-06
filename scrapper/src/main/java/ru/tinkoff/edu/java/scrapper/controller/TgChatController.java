@@ -19,22 +19,24 @@ public class TgChatController implements TgChat {
 
     @Override
     public ResponseEntity<Void> registerChat(
-            @Parameter(
-                    in = ParameterIn.PATH,
-                    required = true,
-                    schema = @Schema())
-            @PathVariable Long id) {
+        @Parameter(
+            in = ParameterIn.PATH,
+            required = true,
+            schema = @Schema())
+        @PathVariable Long id
+    ) {
         tgChatService.registerChat(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteChat(
-            @Parameter(
-                    in = ParameterIn.PATH,
-                    required = true,
-                    schema = @Schema())
-            @PathVariable Long id) {
+        @Parameter(
+            in = ParameterIn.PATH,
+            required = true,
+            schema = @Schema())
+        @PathVariable Long id
+    ) {
         tgChatService.removeChat(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

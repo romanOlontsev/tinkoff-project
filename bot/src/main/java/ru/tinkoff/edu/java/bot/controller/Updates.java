@@ -19,24 +19,25 @@ import ru.tinkoff.edu.java.bot.model.response.ApiErrorResponse;
 public interface Updates {
     @Operation(summary = "Отправить обновление")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Обновление обработано"),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Некорректные параметры запроса",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ApiErrorResponse.class)))})
+        @ApiResponse(
+            responseCode = "200",
+            description = "Обновление обработано"),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Некорректные параметры запроса",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class)))})
     @PostMapping(value = "/updates",
-            produces = {"application/json"},
-            consumes = {"application/json"})
+                 produces = {"application/json"},
+                 consumes = {"application/json"})
     ResponseEntity<Void> postUpdates(
-            @Parameter(
-                    in = ParameterIn.DEFAULT,
-                    required = true,
-                    schema = @Schema())
-            @Valid
-            @RequestBody
-            LinkUpdateRequest body);
+        @Parameter(
+            in = ParameterIn.DEFAULT,
+            required = true,
+            schema = @Schema())
+        @Valid
+        @RequestBody
+        LinkUpdateRequest body
+    );
 }

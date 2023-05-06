@@ -1,5 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.service.jdbc;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.exception.BadRequestException;
@@ -20,9 +22,6 @@ import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcGitHubUpdatesRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcStackOverflowUpdatesRepository;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-
 @RequiredArgsConstructor
 public class JdbcLinksService implements LinkService {
     private final LinkRepository linkRepository;
@@ -38,7 +37,7 @@ public class JdbcLinksService implements LinkService {
         LinkResponse response = linkRepository.add(tgChatId, request);
         if (response.getId() < 0) {
             throw new DataAlreadyExistException(
-                    "Ссылка: " + response.getUrl() + " уже существует у пользователя с id=" + tgChatId);
+                "Ссылка: " + response.getUrl() + " уже существует у пользователя с id=" + tgChatId);
         }
         String type = request.getLink()
                              .getHost()
@@ -56,7 +55,7 @@ public class JdbcLinksService implements LinkService {
         LinkResponse response = linkRepository.remove(tgChatId, request);
         if (response.getId() < 0) {
             throw new DataNotFoundException(
-                    "Ссылка: " + response.getUrl() + " не существует у пользователя с id=" + tgChatId);
+                "Ссылка: " + response.getUrl() + " не существует у пользователя с id=" + tgChatId);
         }
         return response;
     }

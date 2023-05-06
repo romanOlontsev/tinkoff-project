@@ -1,5 +1,10 @@
 package ru.tinkoff.edu.java.scrapper.service.jpa;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -13,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +26,6 @@ import ru.tinkoff.edu.java.scrapper.exception.DataAlreadyExistException;
 import ru.tinkoff.edu.java.scrapper.exception.DataNotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.response.TgChatResponse;
 import ru.tinkoff.edu.java.scrapper.service.TgChatService;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -56,10 +53,11 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
              Database database = DatabaseFactory.getInstance()
                                                 .findCorrectDatabaseImplementation(new JdbcConnection(connection))) {
             Liquibase liquibase = new liquibase.Liquibase("master.xml",
-                    new DirectoryResourceAccessor(new File("").toPath()
-                                                              .toAbsolutePath()
-                                                              .getParent()
-                                                              .resolve("migrations")), database);
+                new DirectoryResourceAccessor(new File("").toPath()
+                                                          .toAbsolutePath()
+                                                          .getParent()
+                                                          .resolve("migrations")), database
+            );
             liquibase.update(new Contexts(), new LabelExpression());
         } catch (LiquibaseException | SQLException | FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -69,9 +67,9 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
     @Test
     void registerChat_shouldThrowDataAlreadyExistException() {
         assertAll(
-                () -> assertThatThrownBy(() -> tgChatService.registerChat(99999L))
-                        .isInstanceOf(DataAlreadyExistException.class)
-                        .hasMessageContaining("Чат с id=99999 уже существует"));
+            () -> assertThatThrownBy(() -> tgChatService.registerChat(99999L))
+                .isInstanceOf(DataAlreadyExistException.class)
+                .hasMessageContaining("Чат с id=99999 уже существует"));
     }
 
     @Test
@@ -84,19 +82,19 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
         TgChatResponse tgChatResponse = tgChatService.registerChat(chatId);
 
         assertAll(
-                () -> assertThat(tgChatResponse).isNotNull()
-                                                .isEqualTo(expectedResponse),
-                () -> assertThat(tgChatResponse).extracting("tgChatId")
-                                                .isEqualTo(chatId)
+            () -> assertThat(tgChatResponse).isNotNull()
+                                            .isEqualTo(expectedResponse),
+            () -> assertThat(tgChatResponse).extracting("tgChatId")
+                                            .isEqualTo(chatId)
         );
     }
 
     @Test
     void removeChat_shouldThrowDataNotFoundException() {
         assertAll(
-                () -> assertThatThrownBy(() -> tgChatService.removeChat(123321L))
-                        .isInstanceOf(DataNotFoundException.class)
-                        .hasMessageContaining("Чат с id=123321 не найден"));
+            () -> assertThatThrownBy(() -> tgChatService.removeChat(123321L))
+                .isInstanceOf(DataNotFoundException.class)
+                .hasMessageContaining("Чат с id=123321 не найден"));
     }
 
     @Test
@@ -109,10 +107,10 @@ class JpaTgChatServiceTest extends IntegrationEnvironment {
         TgChatResponse tgChatResponse = tgChatService.removeChat(chatId);
 
         assertAll(
-                () -> assertThat(tgChatResponse).isNotNull()
-                                                .isEqualTo(expectedResponse),
-                () -> assertThat(tgChatResponse).extracting("tgChatId")
-                                                .isEqualTo(chatId)
+            () -> assertThat(tgChatResponse).isNotNull()
+                                            .isEqualTo(expectedResponse),
+            () -> assertThat(tgChatResponse).extracting("tgChatId")
+                                            .isEqualTo(chatId)
         );
     }
 }

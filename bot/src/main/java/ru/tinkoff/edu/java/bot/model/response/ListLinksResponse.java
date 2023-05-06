@@ -1,9 +1,12 @@
 package ru.tinkoff.edu.java.bot.model.response;
 
-import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

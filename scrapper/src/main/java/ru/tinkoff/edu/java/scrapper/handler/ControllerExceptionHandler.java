@@ -21,8 +21,8 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler({
-            BadRequestException.class,
-            DataAlreadyExistException.class})
+        BadRequestException.class,
+        DataAlreadyExistException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiErrorResponse> handle(RuntimeException e) {
         ApiErrorResponse exceptionResponse = getApiErrorResponse(e, "400", "Некорректные параметры запроса");
@@ -42,6 +42,5 @@ public class ControllerExceptionHandler {
         }
         return exceptionResponse;
     }
-
 
 }

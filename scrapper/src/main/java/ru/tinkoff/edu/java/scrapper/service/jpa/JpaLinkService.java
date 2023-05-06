@@ -1,5 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.service.jpa;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.domain.entity.Chat;
@@ -25,9 +27,6 @@ import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaStackOverflowUpdatesReposi
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaTgChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-
 @RequiredArgsConstructor
 public class JpaLinkService implements LinkService {
     private final JpaLinkRepository linkRepository;
@@ -48,9 +47,9 @@ public class JpaLinkService implements LinkService {
                  .findFirst()
                  .ifPresent(it -> {
                      throw new DataAlreadyExistException(
-                             "Ссылка: " + request.getLink()
-                                                 .toString() + " уже существует у пользователя с id=" +
-                                     tgChatId);
+                         "Ссылка: " + request.getLink()
+                                             .toString() + " уже существует у пользователя с id="
+                             + tgChatId);
                  });
         String host = request.getLink()
                              .getHost()
@@ -77,7 +76,8 @@ public class JpaLinkService implements LinkService {
                                                                  .toString()))
                                   .findFirst()
                                   .orElseThrow(() -> new DataNotFoundException(
-                                          "Ссылка: " + request.getLink() + " не существует у пользователя с id=" + tgChatId));
+                                      "Ссылка: " + request.getLink() + " не существует у пользователя с id="
+                                          + tgChatId));
 
         linkRepository.deleteById(foundLink.getId());
         return linkMapper.linkToLinkResponse(foundLink);
@@ -101,9 +101,9 @@ public class JpaLinkService implements LinkService {
     @Override
     public GitHubUpdatesDto findGitHubUpdatesByLinkId(Long linkId) {
         GitHubUpdates gitHubUpdates =
-                gitHubUpdatesRepository.findById(linkId)
-                                       .orElseThrow(() -> new DataNotFoundException(
-                                               "Обновлений для ссылки с id=" + linkId + " не найдены"));
+            gitHubUpdatesRepository.findById(linkId)
+                                   .orElseThrow(() -> new DataNotFoundException(
+                                       "Обновлений для ссылки с id=" + linkId + " не найдены"));
         return GitHubUpdatesDto.builder()
                                .id(gitHubUpdates.getId())
                                .forksCount(gitHubUpdates.getForksCount())
@@ -115,9 +115,9 @@ public class JpaLinkService implements LinkService {
     @Override
     public StackOverflowUpdatesDto findStackOverflowUpdatesByLinkId(Long linkId) {
         StackOverflowUpdates stackOverflowUpdates =
-                stackOverflowUpdatesRepository.findById(linkId)
-                                              .orElseThrow(() -> new DataNotFoundException(
-                                                      "Обновлений для ссылки с id=" + linkId + " не найдены"));
+            stackOverflowUpdatesRepository.findById(linkId)
+                                          .orElseThrow(() -> new DataNotFoundException(
+                                              "Обновлений для ссылки с id=" + linkId + " не найдены"));
 
         return StackOverflowUpdatesDto.builder()
                                       .id(stackOverflowUpdates.getId())
@@ -130,7 +130,8 @@ public class JpaLinkService implements LinkService {
     @Transactional
     public void setLastCheck(Long id) {
         Link foundLink = linkRepository.findById(id)
-                                       .orElseThrow(() -> new DataNotFoundException("Ссылка с id=" + id + " не найдена"));
+                                       .orElseThrow(() -> new DataNotFoundException(
+                                           "Ссылка с id=" + id + " не найдена"));
         foundLink.setLastCheck(OffsetDateTime.now());
 
     }
@@ -145,7 +146,7 @@ public class JpaLinkService implements LinkService {
                                             .orElse(null);
         Link foundLink = linkRepository.findById(id)
                                        .orElseThrow(() ->
-                                               new DataNotFoundException("Ссылка с id=" + id + " не найдена"));
+                                           new DataNotFoundException("Ссылка с id=" + id + " не найдена"));
         foundLink.setLastCheck(OffsetDateTime.now());
         foundLink.setLastUpdate(lastUpdate);
 
@@ -161,10 +162,10 @@ public class JpaLinkService implements LinkService {
                                       .orElse(null);
 
         StackOverflowUpdates stackOverflowUpdates =
-                stackOverflowUpdatesRepository.findById(id)
-                                              .orElseThrow(() ->
-                                                      new DataNotFoundException(
-                                                              "Обновления для ссылки с id=" + id + " не найдены"));
+            stackOverflowUpdatesRepository.findById(id)
+                                          .orElseThrow(() ->
+                                              new DataNotFoundException(
+                                                  "Обновления для ссылки с id=" + id + " не найдены"));
         stackOverflowUpdates.setAnswered(Boolean.TRUE.equals(isAnswered));
         stackOverflowUpdates.setAnswerCount(answerCount);
     }
@@ -174,15 +175,15 @@ public class JpaLinkService implements LinkService {
     public void updateGitHubLastUpdateDate(Long id, GitHubRepositoryInfoResponse response) {
         Link foundLink = linkRepository.findById(id)
                                        .orElseThrow(() ->
-                                               new DataNotFoundException("Ссылка с id=" + id + " не найдена"));
+                                           new DataNotFoundException("Ссылка с id=" + id + " не найдена"));
         foundLink.setLastCheck(OffsetDateTime.now());
         foundLink.setLastUpdate(response.getUpdatedAt());
 
         GitHubUpdates gitHubUpdates =
-                gitHubUpdatesRepository.findById(id)
-                                       .orElseThrow(() ->
-                                               new DataNotFoundException(
-                                                       "Обновления для ссылки с id=" + id + " не найдены"));
+            gitHubUpdatesRepository.findById(id)
+                                   .orElseThrow(() ->
+                                       new DataNotFoundException(
+                                           "Обновления для ссылки с id=" + id + " не найдены"));
         gitHubUpdates.setForksCount(response.getForksCount());
         gitHubUpdates.setWatchers(response.getWatchers());
     }
@@ -193,8 +194,8 @@ public class JpaLinkService implements LinkService {
                                                                        .id(linkId)
                                                                        .build());
             case "stackoverflow" -> stackOverflowUpdatesRepository.save(StackOverflowUpdates.builder()
-                                                                                    .id(linkId)
-                                                                                    .build());
+                                                                                            .id(linkId)
+                                                                                            .build());
             default -> throw new DataNotFoundException("Updates for link with id=" + linkId + " not found");
         }
     }

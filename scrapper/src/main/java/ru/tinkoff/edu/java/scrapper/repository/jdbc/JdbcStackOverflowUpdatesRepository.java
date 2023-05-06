@@ -16,13 +16,14 @@ public class JdbcStackOverflowUpdatesRepository {
     public StackOverflowUpdatesDto findStackOverflowUpdatesByLinkId(Long linkId) {
         String query = "SELECT * FROM link_info.stackoverflow_updates WHERE id=?";
         return jdbcTemplate.queryForObject(
-                query,
-                (rs, rowNum) -> StackOverflowUpdatesDto.builder()
-                                                       .id(rs.getLong("id"))
-                                                       .answerCount(rs.getInt("answer_count"))
-                                                       .isAnswered(rs.getBoolean("is_answered"))
-                                                       .build(),
-                linkId);
+            query,
+            (rs, rowNum) -> StackOverflowUpdatesDto.builder()
+                                                   .id(rs.getLong("id"))
+                                                   .answerCount(rs.getInt("answer_count"))
+                                                   .isAnswered(rs.getBoolean("is_answered"))
+                                                   .build(),
+            linkId
+        );
     }
 
     public int updateStackOverflowInfo(Long id, StackOverflowQuestionInfoResponse response) {
@@ -36,14 +37,15 @@ public class JdbcStackOverflowUpdatesRepository {
                                       .map(StackOverflowQuestionInfoResponse.Items::getAnswerCount)
                                       .findFirst()
                                       .orElse(null);
-        String query = "UPDATE link_info.stackoverflow_updates " +
-                "SET is_answered = ?, answer_count=? " +
-                "WHERE id = ?";
+        String query = "UPDATE link_info.stackoverflow_updates "
+            + "SET is_answered = ?, answer_count=? "
+            + "WHERE id = ?";
         return jdbcTemplate.update(query, isAnswered, answerCount, id);
     }
+
     public void addStackOverflowUpdatesByLink(Long linkId) {
-        String query = "INSERT INTO link_info.stackoverflow_updates(id) " +
-                "VALUES (?)";
+        String query = "INSERT INTO link_info.stackoverflow_updates(id) "
+            + "VALUES (?)";
         jdbcTemplate.update(query, linkId);
     }
 }

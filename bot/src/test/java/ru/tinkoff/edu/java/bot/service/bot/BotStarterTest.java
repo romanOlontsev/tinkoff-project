@@ -13,8 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.tinkoff.edu.java.bot.configuration.TelegramConfig;
 import ru.tinkoff.edu.java.bot.service.LinkService;
 import ru.tinkoff.edu.java.bot.service.command.CommandList;
-import ru.tinkoff.edu.java.bot.service.command.imp.*;
-
+import ru.tinkoff.edu.java.bot.service.command.imp.HelpCommand;
+import ru.tinkoff.edu.java.bot.service.command.imp.ListCommand;
+import ru.tinkoff.edu.java.bot.service.command.imp.StartCommand;
+import ru.tinkoff.edu.java.bot.service.command.imp.TrackCommand;
+import ru.tinkoff.edu.java.bot.service.command.imp.UnknownCommand;
+import ru.tinkoff.edu.java.bot.service.command.imp.UntrackCommand;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
@@ -27,11 +31,12 @@ class BotStarterTest {
     private TelegramConfig telegramConfig;
     @Spy
     private CommandList commandList = new CommandList(
-            new HelpCommand(),
-            new StartCommand(),
-            new TrackCommand(),
-            new UntrackCommand(),
-            new ListCommand(new LinkService()));
+        new HelpCommand(),
+        new StartCommand(),
+        new TrackCommand(),
+        new UntrackCommand(),
+        new ListCommand(new LinkService())
+    );
     @Mock
     private Update update;
     @Mock
@@ -52,10 +57,10 @@ class BotStarterTest {
 
         SendMessage sendMessage = botStarter.handleByCommand(update, message);
         assertAll(
-                () -> assertThat(sendMessage.getParameters()).extracting("chat_id")
-                                                             .isEqualTo(1L),
-                () -> assertThat(sendMessage.getParameters()).extracting("text")
-                                                             .isEqualTo(listCommandAnswer)
+            () -> assertThat(sendMessage.getParameters()).extracting("chat_id")
+                                                         .isEqualTo(1L),
+            () -> assertThat(sendMessage.getParameters()).extracting("text")
+                                                         .isEqualTo(listCommandAnswer)
         );
     }
 
@@ -72,10 +77,10 @@ class BotStarterTest {
 
         SendMessage sendMessage = botStarter.handleByCommand(update, message);
         assertAll(
-                () -> assertThat(sendMessage.getParameters()).extracting("chat_id")
-                                                             .isEqualTo(1L),
-                () -> assertThat(sendMessage.getParameters()).extracting("text")
-                                                             .isEqualTo(unknownCommand)
+            () -> assertThat(sendMessage.getParameters()).extracting("chat_id")
+                                                         .isEqualTo(1L),
+            () -> assertThat(sendMessage.getParameters()).extracting("text")
+                                                         .isEqualTo(unknownCommand)
         );
     }
 }

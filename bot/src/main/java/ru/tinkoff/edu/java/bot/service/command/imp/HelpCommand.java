@@ -9,11 +9,11 @@ import ru.tinkoff.edu.java.bot.service.command.Command;
 public class HelpCommand implements Command {
 
     private static final String HELP_MESSAGE = """
-            /start -- register user
-            /track -- start tracking a link
-            /untrack -- stop tracking a link
-            /list -- show list of tracked links
-            """;
+        /start -- register user
+        /track -- start tracking a link
+        /untrack -- stop tracking a link
+        /list -- show list of tracked links
+        """;
 
     @Override
     public String command() {
