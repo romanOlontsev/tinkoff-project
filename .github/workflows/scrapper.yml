@@ -41,3 +41,11 @@ jobs:
         run: |
           docker build -t ghcr.io/romanolontsev/tinkoff-project/scrapper:latest scrapper/.
           docker push ghcr.io/romanolontsev/tinkoff-project/scrapper:latest
+
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Checkstyle with Maven
+        run: mvn -pl scrapper -am checkstyle:check
