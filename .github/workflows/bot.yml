@@ -1,0 +1,43 @@
+name: Bot CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'bot/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'bot/**'
+
+permissions:
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Java setup
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn package -pl bot -am
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push the scrapper Docker image
+        run: |
+          docker build -t ghcr.io/romanolontsev/tinkoff-project/bot:latest --build-arg NAME=${{ secrets.BOT_NAME }} --build-arg TOKEN=${{ secrets.BOT_TOKEN }} bot/.
+          docker push ghcr.io/romanolontsev/tinkoff-project/bot:latest
