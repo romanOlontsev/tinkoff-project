@@ -39,5 +39,5 @@ jobs:
 
       - name: Build and push the scrapper Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/scrapper:latest scrapper/.
-          docker push ghcr.io/${{ github.repository }}/scrapper:latest
+          docker build -t ghcr.io/romaolontsev/tinkoff-project/scrapper:latest scrapper/.
+          docker push ghcr.io/romaolontsev/tinkoff-project/scrapper:latest
