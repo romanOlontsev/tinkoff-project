@@ -14,6 +14,8 @@
     <properties>
         <openapi-webmvc-ui.version>2.0.2</openapi-webmvc-ui.version>
         <jooq.version>3.18.3</jooq.version>
+        <micrometer-registry-prometheus.version>1.10.5</micrometer-registry-prometheus.version>
+        <micrometer-tracing-bridge-brave.version>1.0.4</micrometer-tracing-bridge-brave.version>
     </properties>
 
     <dependencies>
@@ -61,6 +63,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
