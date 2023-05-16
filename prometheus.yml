@@ -2,14 +2,8 @@ global:
   scrape_interval:     15s
 
 scrape_configs:
-  - job_name: 'bot-spring-actuator'
+  - job_name: 'spring-actuator'
     metrics_path: '/metrics'
     scrape_interval: 5s
     static_configs:
-      - targets: ['host.docker.internal:7080']
-
-  - job_name: 'scrapper-spring-actuator'
-    metrics_path: '/metrics'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['host.docker.internal:7081']
+      - targets: ['host.docker.internal:7080', 'host.docker.internal:7081']
