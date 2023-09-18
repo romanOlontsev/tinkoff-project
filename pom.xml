@@ -27,6 +27,8 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <org.mapstruct.version>1.5.4.Final</org.mapstruct.version>
         <project-lombok.version>1.18.26</project-lombok.version>
+        <micrometer-registry-prometheus.version>1.10.5</micrometer-registry-prometheus.version>
+        <micrometer-tracing-bridge-brave.version>1.0.4</micrometer-tracing-bridge-brave.version>
     </properties>
 
     <dependencyManagement>
@@ -62,6 +64,16 @@
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer-registry-prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bridge-brave</artifactId>
+                <version>${micrometer-tracing-bridge-brave.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

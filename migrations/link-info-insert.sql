@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset admin:29
+--changeset admin:31
 INSERT INTO link_info.chat(chat_id)
 VALUES (333);
 INSERT INTO link_info.chat(chat_id)
